@@ -12,12 +12,9 @@ import impersonate from "../scripts/impersonate";
 import { forkReset, sendEth } from "./utils";
 
 import connectV2UbiquityArtifacts from "../artifacts/contracts/connector/main.sol/ConnectV2Ubiquity.json";
-
-import { abi as implementationsABI } from "../scripts/constant/abi/core/InstaImplementations.json";
 import { Contract } from ".pnpm/@ethersproject+contracts@5.4.1/node_modules/@ethersproject/contracts";
-const implementationsMappingAddr = "0xCBA828153d3a85b30B5b912e1f2daCac5816aE9D";
 
-describe.only("Ubiquity", function () {
+describe("Ubiquity connector", function () {
   const ubiquityTest = "UBIQUITY-TEST-A";
 
   const BOND = "0x2dA07859613C14F6f05c97eFE37B9B4F212b5eF5";
@@ -32,7 +29,7 @@ describe.only("Ubiquity", function () {
   const ethWhaleAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
   const uadWhaleAddress = "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd";
 
-  const blockFork = 13097100;
+  const blockFork = 13165306;
   const one = BigNumber.from(10).pow(18);
   const onep = BigNumber.from(10).pow(6);
   const ABI = [
@@ -72,6 +69,7 @@ describe.only("Ubiquity", function () {
     // console.log("LP", ethers.utils.formatEther(LP.toString()));
     return LP;
   };
+  before(async () => {});
 
   beforeEach(async () => {
     await forkReset(blockFork);
@@ -92,20 +90,11 @@ describe.only("Ubiquity", function () {
     await sendEth(ethWhale, dsa.address, 100);
 
     instaIndex = new ethers.Contract(addresses.core.instaIndex, abis.core.instaIndex, ethWhale);
+    instaConnectorsV2 = new ethers.Contract(addresses.core.connectorsV2, abis.core.connectorsV2);
 
     const masterAddress = await instaIndex.master();
     const [master] = await impersonate([masterAddress]);
     await sendEth(ethWhale, masterAddress, 100);
-
-    instaConnectorsV2 = new ethers.Contract(addresses.core.connectorsV2, abis.core.connectorsV2);
-
-    instaImplementationsMapping = await ethers.getContractAt(implementationsABI, implementationsMappingAddr);
-    const InstaAccountV2DefaultImplFactory = await ethers.getContractFactory("InstaDefaultImplementation");
-    instaAccountV2DefaultImpl = await InstaAccountV2DefaultImplFactory.deploy(addresses.core.instaIndex);
-    await instaAccountV2DefaultImpl.deployed();
-    await (
-      await instaImplementationsMapping.connect(master).setDefaultImplementation(instaAccountV2DefaultImpl.address)
-    ).wait();
 
     connector = await deployAndEnableConnector({
       connectorName: ubiquityTest,
