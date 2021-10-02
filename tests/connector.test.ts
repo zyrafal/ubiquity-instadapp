@@ -1,21 +1,23 @@
+import type { SignerWithAddress } from "hardhat-deploy-ethers/dist/src/signers";
 import { expect } from "chai";
 import hre from "hardhat";
-import { BigNumber } from "ethers";
+import { BigNumber, Contract } from "ethers";
 const ethers = hre.ethers;
 
 import deployAndEnableConnector from "../scripts/deployAndEnableConnector.js";
-import buildDSAv2 from "../scripts/buildDSAv2";
 import encodeSpells from "../scripts/encodeSpells";
 import addresses from "../scripts/constant/addresses";
 import abis from "../scripts/constant/abis";
 import impersonate from "../scripts/impersonate";
 import { forkReset, sendEth } from "./utils";
+import { ConnectV2Ubiquity } from "../artifacts/types";
 
 import connectV2UbiquityArtifacts from "../artifacts/contracts/connector/main.sol/ConnectV2Ubiquity.json";
-import { Contract } from ".pnpm/@ethersproject+contracts@5.4.1/node_modules/@ethersproject/contracts";
+
+import dsaABI from "../scripts/constant/abi/core/InstaImplementationM1.json";
 
 describe("Ubiquity connector", function () {
-  const ubiquityTest = "UBIQUITY-TEST-A";
+  const ubiquityTest = "Ubiquity-v1";
 
   const BOND = "0x2dA07859613C14F6f05c97eFE37B9B4F212b5eF5";
   const UAD = "0x0F644658510c95CB46955e55D7BA9DDa9E9fBEc6";
@@ -53,11 +55,10 @@ describe("Ubiquity connector", function () {
   let BONDContract: Contract;
   let instaIndex: Contract;
   let instaConnectorsV2: Contract;
-  let connector: Contract;
-  let instaImplementationsMapping: Contract;
-  let instaAccountV2DefaultImpl: Contract;
+  let connector: ConnectV2Ubiquity;
 
   let uadWhale;
+  let ethWhale;
 
   const bondingShareLpAmount = async function (address: string) {
     let LP = 0;
@@ -69,15 +70,30 @@ describe("Ubiquity connector", function () {
     // console.log("LP", ethers.utils.formatEther(LP.toString()));
     return LP;
   };
-  before(async () => {});
+  let network: string;
+  let chainId: number | undefined;
+  let live: boolean;
+
+  before(async () => {
+    network = hre.network.name;
+    chainId = hre.network.config.chainId;
+    live = hre.network.live;
+    console.log("network", network, chainId, live);
+  });
 
   beforeEach(async () => {
-    await forkReset(blockFork);
+    let deployer: SignerWithAddress;
 
-    [uadWhale] = await impersonate([uadWhaleAddress]);
-    const [ethWhale] = await impersonate([ethWhaleAddress]);
+    // if (network == "hardhat")
+    {
+      await forkReset(blockFork);
 
-    await sendEth(ethWhale, uadWhaleAddress, 100);
+      [uadWhale] = await impersonate([uadWhaleAddress]);
+      [ethWhale] = await impersonate([ethWhaleAddress]);
+
+      await sendEth(ethWhale, uadWhaleAddress, 100);
+    }
+
     POOL3Contract = new ethers.Contract(POOL3, ABI, uadWhale);
     CRV3Contract = new ethers.Contract(CRV3, ABI, uadWhale);
     uAD3CRVfContract = new ethers.Contract(UAD3CRVF, ABI, uadWhale);
@@ -86,22 +102,32 @@ describe("Ubiquity connector", function () {
     USDCContract = new ethers.Contract(USDC, ABI, uadWhale);
     USDTContract = new ethers.Contract(USDT, ABI, uadWhale);
     BONDContract = new ethers.Contract(BOND, ABI, uadWhale);
-    dsa = (await buildDSAv2(uadWhaleAddress)).connect(uadWhale);
-    await sendEth(ethWhale, dsa.address, 100);
 
     instaIndex = new ethers.Contract(addresses.core.instaIndex, abis.core.instaIndex, ethWhale);
+
+    const receipt = await (await instaIndex.build(uadWhaleAddress, 2, uadWhaleAddress)).wait();
+    const event = receipt.events.find((a: any) => a.event === "LogAccountCreated");
+    const dsaAddress: string = event.args.account;
+    console.log("dsaAddress", dsaAddress);
+    console.log("dsaABI", dsaABI);
+    dsa = await ethers.getContractAt(dsaABI, dsaAddress);
+
+    expect(dsa.address).to.be.properAddress;
+
+    await sendEth(ethWhale, dsa.address, 100);
+
     instaConnectorsV2 = new ethers.Contract(addresses.core.connectorsV2, abis.core.connectorsV2);
 
     const masterAddress = await instaIndex.master();
     const [master] = await impersonate([masterAddress]);
     await sendEth(ethWhale, masterAddress, 100);
 
-    connector = await deployAndEnableConnector({
+    connector = (await deployAndEnableConnector({
       connectorName: ubiquityTest,
       contractArtifact: connectV2UbiquityArtifacts,
       signer: master,
       connectors: instaConnectorsV2
-    });
+    })) as ConnectV2Ubiquity;
   });
 
   const dsaDepositUAD3CRVf = async (amount: number) => {
@@ -188,7 +214,7 @@ describe("Ubiquity connector", function () {
   });
 
   describe("Main", function () {
-    it("should deposit uAD3CRVf to get Ubiquity Bonding Shares", async function () {
+    it.only("should deposit uAD3CRVf to get Ubiquity Bonding Shares", async function () {
       await dsaDepositUAD3CRVf(100);
       expect(await bondingShareLpAmount(dsa.address)).to.be.equal(0);
       await expect(

@@ -2,18 +2,16 @@ const abis = require("./constant/abis");
 const addresses = require("./constant/addresses");
 
 const hre = require("hardhat");
-const { ethers, waffle } = hre;
+const { waffle } = hre;
 const { deployContract } = waffle;
-const fs = require("fs")
 
+module.exports = async function ({ connectorName, contractArtifact, signer, connectors }) {
+  const connectorInstance = await deployContract(signer, contractArtifact, []);
 
-module.exports = async function ({connectorName, contractArtifact, signer, connectors}) {
-    const connectorInstanace = await deployContract(signer, contractArtifact, []);
-    
-    await connectors.connect(signer).addConnectors([connectorName], [connectorInstanace.address])
+  await connectors.connect(signer).addConnectors([connectorName], [connectorInstance.address]);
 
-    addresses.connectors[connectorName] = connectorInstanace.address
-    abis.connectors[connectorName] = contractArtifact.abi;
+  addresses.connectors[connectorName] = connectorInstance.address;
+  abis.connectors[connectorName] = contractArtifact.abi;
 
-    return connectorInstanace;
+  return connectorInstance;
 };

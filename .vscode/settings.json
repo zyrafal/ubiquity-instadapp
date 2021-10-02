@@ -1,12 +1,11 @@
 {
   "favorites.resources": [
-    "contracts/TheSevens.sol",
     "hardhat.config.js",
     "scripts/deploy.js",
     "test/sample-test.js",
     "hardhat.config.ts",
     "package.json",
-    "tests/TheSevens.ts"
+    "deploy/InstaUbiquityResolver.ts"
   ],
   "solidity.defaultCompiler": "remote",
   "solidity.compileUsingRemoteVersion": "v0.7.6+commit.7338295f",
