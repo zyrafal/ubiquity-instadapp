@@ -1,5 +1,6 @@
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-web3";
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
 
@@ -30,7 +31,7 @@ const config: HardhatUserConfig = {
     deployer: { default: 0 }
   },
   solidity: {
-    version: "0.8.9",
+    version: "0.7.6",
     settings: {
       optimizer: {
         enabled: true,

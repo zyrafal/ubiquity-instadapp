@@ -6,6 +6,8 @@ specifiers:
   '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.11
   '@nomiclabs/hardhat-etherscan': ^2.1.6
   '@nomiclabs/hardhat-waffle': ^2.0.1
+  '@nomiclabs/hardhat-web3': ^2.0.0
+  '@openzeppelin/contracts': ^3.4.0-solc-0.7
   '@typechain/ethers-v5': ^7.1.2
   '@typechain/hardhat': ^2.3.0
   '@types/chai': ^4.2.22
@@ -40,6 +42,8 @@ devDependencies:
   '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.11_ethers@5.4.7+hardhat@2.6.4
   '@nomiclabs/hardhat-etherscan': 2.1.6_hardhat@2.6.4
   '@nomiclabs/hardhat-waffle': 2.0.1_ac54754ba341efd3fb495ccebd3a88b9
+  '@nomiclabs/hardhat-web3': 2.0.0_hardhat@2.6.4
+  '@openzeppelin/contracts': 3.4.2
   '@typechain/ethers-v5': 7.1.2_21d15a494ac6c0747fc4bf1eb8ad9d08
   '@typechain/hardhat': 2.3.0_hardhat@2.6.4+typechain@5.1.2
   '@types/chai': 4.2.22
@@ -687,6 +691,20 @@ packages:
       hardhat: 2.6.4
     dev: true
 
+  /@nomiclabs/hardhat-web3/2.0.0_hardhat@2.6.4:
+    resolution: {integrity: sha512-zt4xN+D+fKl3wW2YlTX3k9APR3XZgPkxJYf36AcliJn3oujnKEVRZaHu0PhgLjO+gR+F/kiYayo9fgd2L8970Q==}
+    peerDependencies:
+      hardhat: ^2.0.0
+      web3: ^1.0.0-beta.36
+    dependencies:
+      '@types/bignumber.js': 5.0.0
+      hardhat: 2.6.4
+    dev: true
+
+  /@openzeppelin/contracts/3.4.2:
+    resolution: {integrity: sha512-z0zMCjyhhp4y7XKAcDAi3Vgms4T2PstwBdahiO0+9NaGICQKjynK3wduSRplTgk4LXmoO1yfDGO5RbjKYxtuxA==}
+    dev: true
+
   /@resolver-engine/core/0.3.3:
     resolution: {integrity: sha512-eB8nEbKDJJBi5p5SrvrvILn4a0h42bKtbCTri3ZxCGt6UvoQyp7HnGOfki944bUjBSHKK3RvgfViHn+kqdXtnQ==}
     dependencies:
@@ -907,6 +925,13 @@ packages:
 
   /@types/abstract-leveldown/5.0.2:
     resolution: {integrity: sha512-+jA1XXF3jsz+Z7FcuiNqgK53hTa/luglT2TyTpKPqoYbxVY+mCPF22Rm+q3KPBrMHJwNXFrTViHszBOfU4vftQ==}
+    dev: true
+
+  /@types/bignumber.js/5.0.0:
+    resolution: {integrity: sha512-0DH7aPGCClywOFaxxjE6UwpN2kQYe9LwuDQMv+zYA97j5GkOMo8e66LYT+a8JYU7jfmUFRZLa9KycxHDsKXJCA==}
+    deprecated: This is a stub types definition for bignumber.js (https://github.com/MikeMcl/bignumber.js/). bignumber.js provides its own type definitions, so you don't need @types/bignumber.js installed!
+    dependencies:
+      bignumber.js: 9.0.1
     dev: true
 
   /@types/bn.js/4.11.6:
