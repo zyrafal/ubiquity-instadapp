@@ -2,10 +2,9 @@ import type { DeployFunction } from "hardhat-deploy/types";
 
 const deployInstaUbiquityResolverFunction: DeployFunction = async function ({ deployments, ethers }) {
   const [deployer] = await ethers.getSigners();
+  const nonce = await deployer.getTransactionCount("latest");
 
-  console.log("InstaUbiquityResolver deploying... deployer : ", deployer.address);
-
-  await deployments.deploy("InstaUbiquityResolver", {
+  const tx = await deployments.deploy("InstaUbiquityResolver", {
     args: [],
     from: deployer.address,
     log: true

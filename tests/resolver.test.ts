@@ -19,29 +19,25 @@ describe("Ubiquity resolver", function () {
   before(async () => {
     deployer = await ethers.getNamedSigner("deployer");
     const nonce = (await deployer.getTransactionCount("latest")) - 1;
-    console.log(`deployer @ ${deployer.address} ${nonce}`);
+    const previousContractAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce });
+    console.log(`InstaUbiquityResolver deployed @ ${previousContractAddress} ? <= ${deployer.address} ${nonce}`);
 
-    let resolverAddress;
-    if (network == "local2") {
-      resolverAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce });
-    } //
-    else if (network == "tenderly" || network == "local") {
-      resolver = await ethers.getContract("InstaUbiquityResolver");
-      resolverAddress = resolver.address;
-    }
+    try {
+      resolver = await ethers.getContractAt("InstaUbiquityResolver", previousContractAddress);
 
-    if (resolverAddress) {
-      resolver = await ethers.getContractAt("InstaUbiquityResolver", resolverAddress);
+      await resolver.ayt(); // test resolver is deployed or crash
       console.log("InstaUbiquityResolver already deployed");
-    } else {
+    } catch (e) {
       await deployments.fixture(["InstaUbiquityResolver"]);
+
       resolver = await ethers.getContract("InstaUbiquityResolver");
+
       console.log("InstaUbiquityResolver deployed with fixture");
     }
 
     // test resolver is deployed or crash
     await resolver.ayt();
-    console.log(`InstaUbiquityResolver @ ${resolver.address}`);
+    console.log(`InstaUbiquityResolver deployed @ ${resolver.address}`);
   });
 
   describe("Ubiquity Datas", () => {

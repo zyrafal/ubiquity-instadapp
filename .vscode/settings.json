@@ -1,11 +1,17 @@
 {
   "favorites.resources": [
+    "contracts/connector",
+    "contracts/resolver",
     "hardhat.config.js",
     "scripts/deploy.js",
     "test/sample-test.js",
     "hardhat.config.ts",
     "package.json",
-    "deploy/InstaUbiquityResolver.ts"
+    "deploy/InstaUbiquityResolver.ts",
+    "tests/connector.test.ts",
+    "tests/resolver.test.ts",
+    "deployments/mainnet/Implementation_m1.sol/InstaImplementationM1.json",
+    ".vscode/settings.json"
   ],
   "solidity.defaultCompiler": "remote",
   "solidity.compileUsingRemoteVersion": "v0.7.6+commit.7338295f",

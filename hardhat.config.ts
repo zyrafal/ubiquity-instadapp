@@ -29,8 +29,9 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   namedAccounts: {
     deployer: { default: 0 },
-    uadWhaleAddress: "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd",
-    ethWhaleAddress: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    tester: { default: 1 },
+    uadWhale: "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd",
+    ethWhale: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
   },
   networks: {
     hardhat: {

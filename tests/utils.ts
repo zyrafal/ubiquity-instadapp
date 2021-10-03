@@ -18,7 +18,7 @@ async function forkReset(blockNumber: number) {
 
 async function sendEth(from: Signer, to: string, amount: number) {
   await from.sendTransaction({
-    to: to,
+    to,
     value: hre.ethers.BigNumber.from(10).pow(18).mul(amount)
   });
 }

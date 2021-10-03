@@ -14,7 +14,7 @@ import { ConnectV2Ubiquity } from "../artifacts/types";
 
 import connectV2UbiquityArtifacts from "../artifacts/contracts/connector/main.sol/ConnectV2Ubiquity.json";
 
-import dsaABI from "../scripts/constant/abi/core/InstaImplementationM1.json";
+import instaImplementationsM1 from "../scripts/constant/abi/core/InstaImplementationM1.json";
 
 describe("Ubiquity connector", function () {
   const ubiquityTest = "Ubiquity-v1";
@@ -82,16 +82,18 @@ describe("Ubiquity connector", function () {
   });
 
   beforeEach(async () => {
-    let deployer: SignerWithAddress;
+    let { deployer, ethWhale, uadWhale } = await ethers.getNamedSigners();
 
-    // if (network == "hardhat")
-    {
+    if (network == "hardhat") {
       await forkReset(blockFork);
 
       [uadWhale] = await impersonate([uadWhaleAddress]);
       [ethWhale] = await impersonate([ethWhaleAddress]);
 
       await sendEth(ethWhale, uadWhaleAddress, 100);
+    }
+    if (network == "tenderly") {
+      await sendEth(deployer, uadWhaleAddress, 100);
     }
 
     POOL3Contract = new ethers.Contract(POOL3, ABI, uadWhale);
@@ -104,19 +106,13 @@ describe("Ubiquity connector", function () {
     BONDContract = new ethers.Contract(BOND, ABI, uadWhale);
 
     instaIndex = new ethers.Contract(addresses.core.instaIndex, abis.core.instaIndex, ethWhale);
+    instaConnectorsV2 = new ethers.Contract(addresses.core.connectorsV2, abis.core.connectorsV2);
 
     const receipt = await (await instaIndex.build(uadWhaleAddress, 2, uadWhaleAddress)).wait();
     const event = receipt.events.find((a: any) => a.event === "LogAccountCreated");
     const dsaAddress: string = event.args.account;
-    console.log("dsaAddress", dsaAddress);
-    console.log("dsaABI", dsaABI);
-    dsa = await ethers.getContractAt(dsaABI, dsaAddress);
-
-    expect(dsa.address).to.be.properAddress;
-
+    dsa = (await ethers.getContractAt(instaImplementationsM1, dsaAddress)).connect(uadWhale);
     await sendEth(ethWhale, dsa.address, 100);
-
-    instaConnectorsV2 = new ethers.Contract(addresses.core.connectorsV2, abis.core.connectorsV2);
 
     const masterAddress = await instaIndex.master();
     const [master] = await impersonate([masterAddress]);
@@ -214,7 +210,7 @@ describe("Ubiquity connector", function () {
   });
 
   describe("Main", function () {
-    it.only("should deposit uAD3CRVf to get Ubiquity Bonding Shares", async function () {
+    it("should deposit uAD3CRVf to get Ubiquity Bonding Shares", async function () {
       await dsaDepositUAD3CRVf(100);
       expect(await bondingShareLpAmount(dsa.address)).to.be.equal(0);
       await expect(
