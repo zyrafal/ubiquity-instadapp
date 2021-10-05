@@ -13,17 +13,12 @@ import "solidity-coverage";
 import "./tasks/index";
 
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: "../.env" });
+
 if (!process.env.ALCHEMY_ID) {
   throw new Error("ENV variables not set!");
 }
-const accounts = [
-  process.env.PRIVATE_KEY_1 || "",
-  process.env.PRIVATE_KEY_2 || "",
-  process.env.PRIVATE_KEY_3 || "",
-  process.env.PRIVATE_KEY_4 || "",
-  process.env.PRIVATE_KEY_5 || ""
-];
+const accounts = [process.env.PRIVATE_KEY_1 || "", process.env.PRIVATE_KEY_2 || ""];
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -54,18 +49,18 @@ const config: HardhatUserConfig = {
     },
     mainnet: {
       chainId: 1,
-      // url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      // url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
       url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
       accounts
     },
     rinkeby: {
       chainId: 4,
-      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_ID}`,
       accounts
     },
     ropsten: {
       chainId: 3,
-      url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      url: `https://ropsten.infura.io/v3/${process.env.INFURA_ID}`,
       accounts
     },
     local: {
@@ -75,7 +70,7 @@ const config: HardhatUserConfig = {
     },
     tenderly: {
       chainId: 1,
-      url: `https://rpc.tenderly.co/fork/${process.env.TENDERLY_FORK_ID}`,
+      url: `https://rpc.tenderly.co/fork/${process.env.TENDERLY_FORK_PATH}`,
       accounts,
       initialBaseFeePerGas: 0
     }

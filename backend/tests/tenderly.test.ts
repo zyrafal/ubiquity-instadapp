@@ -14,7 +14,7 @@ describe("Tenderly fork", function () {
   let deployer: string;
   let tester: string;
   let ethWhale: string;
-  const url = `https://rpc.tenderly.co/fork/${process.env.TENDERLY_FORK_ID}`;
+  const url = `https://rpc.tenderly.co/fork/${process.env.TENDERLY_FORK_PATH}`;
 
   const balance = async (address: string): Promise<string> => {
     return utils.formatEther(await provider.getBalance(address));

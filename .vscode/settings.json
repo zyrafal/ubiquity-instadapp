@@ -11,7 +11,8 @@
     "tests/connector.test.ts",
     "tests/resolver.test.ts",
     "deployments/mainnet/Implementation_m1.sol/InstaImplementationM1.json",
-    ".vscode/settings.json"
+    ".vscode/settings.json",
+    "backend/hardhat.config.ts"
   ],
   "solidity.defaultCompiler": "remote",
   "solidity.compileUsingRemoteVersion": "v0.7.6+commit.7338295f",

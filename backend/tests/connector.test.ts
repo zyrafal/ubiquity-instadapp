@@ -23,7 +23,7 @@ import instaImplementationsM1 from "../scripts/constant/abi/core/InstaImplementa
 
 describe("Ubiquity connector", function () {
   const ubiquityTest = "Ubiquity-v1";
-  const url = `https://rpc.tenderly.co/fork/${process.env.TENDERLY_FORK_ID}`;
+  const url = `https://rpc.tenderly.co/fork/${process.env.TENDERLY_FORK_PATH}`;
 
   const BOND = "0x2dA07859613C14F6f05c97eFE37B9B4F212b5eF5";
   const UAD = "0x0F644658510c95CB46955e55D7BA9DDa9E9fBEc6";
