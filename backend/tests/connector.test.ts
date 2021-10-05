@@ -34,9 +34,6 @@ describe("Ubiquity connector", function () {
   const POOL3 = "0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7";
   const UAD3CRVF = "0x20955CB69Ae1515962177D164dfC9522feef567E";
 
-  const ethWhaleAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
-  const uadWhaleAddress = "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd";
-
   const blockFork = 13165306;
   const one = BigNumber.from(10).pow(18);
   const onep = BigNumber.from(10).pow(6);
@@ -60,13 +57,8 @@ describe("Ubiquity connector", function () {
   let USDTContract: Contract;
   let BONDContract: Contract;
   let instaIndex: Contract;
-  let instaConnectorsV2: Contract;
-  let connector: ConnectV2Ubiquity;
 
-  let uadWhale: SignerWithAddress;
-  let ethWhale: SignerWithAddress;
   let deployer: SignerWithAddress;
-  let deployerAddress: string;
 
   const bondingShareLpAmount = async function (address: string) {
     let LP = 0;
@@ -82,9 +74,14 @@ describe("Ubiquity connector", function () {
   let chainId: number | undefined;
   let live: boolean;
 
+  let ethWhaleAddress: string;
+  let uadWhaleAddress: string;
+  let ethWhale: SignerWithAddress;
+  let uadWhale: SignerWithAddress;
+
   before(async () => {
-    ({ deployer } = await ethers.getNamedSigners());
-    deployerAddress = deployer.address;
+    deployer = await ethers.getNamedSigner("deployer");
+    ({ ethWhale: ethWhaleAddress, uadWhale: uadWhaleAddress } = await hre.getNamedAccounts());
 
     network = hre.network.name;
     chainId = hre.network.config.chainId;
@@ -100,62 +97,20 @@ describe("Ubiquity connector", function () {
     USDTContract = new ethers.Contract(USDT, ABI, provider);
     BONDContract = new ethers.Contract(BOND, ABI, provider);
 
-    if (network == "hardhat") {
-      [uadWhale] = await impersonate([uadWhaleAddress]);
-      [ethWhale] = await impersonate([ethWhaleAddress]);
-      await sendEth(ethWhale, deployerAddress, one.mul(1000));
-      await uADContract.connect(uadWhale).transfer(deployerAddress, one.mul(1000));
-      await uAD3CRVfContract.connect(uadWhale).transfer(deployerAddress, one.mul(5000));
-    } else if (network == "tenderly") {
-      await sendTxEth(url, ethWhaleAddress, deployerAddress, one.mul(1000));
-
-      const tx1 = await uADContract.populateTransaction.transfer(deployerAddress, one.mul(1000));
-      tx1.from = uadWhaleAddress;
-      await sendTx(url, tx1);
-
-      const tx2 = await uAD3CRVfContract.populateTransaction.transfer(deployerAddress, one.mul(5000));
-      tx2.from = uadWhaleAddress;
-      await sendTx(url, tx2);
-    }
-
     instaIndex = new ethers.Contract(addresses.core.instaIndex, abis.core.instaIndex, deployer);
-    instaConnectorsV2 = new ethers.Contract(addresses.core.connectorsV2, abis.core.connectorsV2);
 
-    const receipt = await (await instaIndex.build(deployerAddress, 2, deployerAddress)).wait();
+    const receipt = await (await instaIndex.build(deployer.address, 2, deployer.address)).wait();
     const event = receipt.events.find((a: any) => a.event === "LogAccountCreated");
     const dsaAddress: string = event.args.account;
     dsa = (await ethers.getContractAt(instaImplementationsM1, dsaAddress)).connect(deployer);
-
-    const masterAddress = await instaIndex.master();
-
-    let master: SignerWithAddress = deployer;
-    if (network == "hardhat") {
-      await sendEth(deployer, dsa.address, one.mul(100));
-      await sendEth(deployer, masterAddress, one.mul(100));
-      [master] = await impersonate([masterAddress]);
-    } else if (network == "tenderly") {
-      await sendTxEth(url, deployerAddress, dsa.address, BigNumber.from(10).pow(20));
-      await sendTxEth(url, deployerAddress, masterAddress, BigNumber.from(10).pow(20));
-    }
-
-    console.log("master         eth", utils.formatEther(await ethers.provider.getBalance(masterAddress)));
-    const contractFactory = await ethers.getContractFactory("ConnectV2Ubiquity");
-    connector = (await contractFactory.deploy()) as ConnectV2Ubiquity;
-
-    const tx3 = await instaConnectorsV2.populateTransaction.addConnectors([ubiquityTest], [connector.address]);
-    console.log(tx3);
-    tx3.from = masterAddress;
-    await sendTx(url, tx3);
-
-    addresses.connectors[ubiquityTest] = connector.address;
   });
 
   beforeEach(async () => {
-    console.log("deployer       eth", utils.formatEther(await ethers.provider.getBalance(deployerAddress)));
+    console.log("deployer       eth", utils.formatEther(await ethers.provider.getBalance(deployer.address)));
     console.log("dsa            eth", utils.formatEther(await ethers.provider.getBalance(dsa.address)));
-    console.log("deployer       uad", utils.formatEther(await uADContract.balanceOf(deployerAddress)));
+    console.log("deployer       uad", utils.formatEther(await uADContract.balanceOf(deployer.address)));
     console.log("dsa            uad", utils.formatEther(await uADContract.balanceOf(dsa.address)));
-    console.log("deployer uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(deployerAddress)));
+    console.log("deployer uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(deployer.address)));
     console.log("dsa      uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(dsa.address)));
     console.log("dsa            dai", utils.formatEther(await DAIContract.balanceOf(dsa.address)));
     console.log("dsa          bonds", utils.formatEther(await bondingShareLpAmount(dsa.address)));
@@ -226,8 +181,6 @@ describe("Ubiquity connector", function () {
       expect(USDTContract.address).to.be.properAddress;
       expect(BONDContract.address).to.be.properAddress;
       expect(instaIndex.address).to.be.properAddress;
-      expect(instaConnectorsV2.address).to.be.properAddress;
-      expect(connector.address).to.be.properAddress;
       expect(dsa.address).to.be.properAddress;
     });
     it("Should deposit uAD3CRVf into DSA wallet", async function () {

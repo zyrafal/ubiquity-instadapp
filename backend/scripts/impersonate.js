@@ -5,7 +5,7 @@ module.exports = async (accounts) => {
   for (const account of accounts) {
     await network.provider.request({
       method: "hardhat_impersonateAccount",
-      params: [account],
+      params: [account]
     });
 
     signers.push(await ethers.getSigner(account));
