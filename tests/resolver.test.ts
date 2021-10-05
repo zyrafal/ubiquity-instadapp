@@ -41,7 +41,7 @@ describe("Ubiquity resolver", function () {
   });
 
   describe("Ubiquity Datas", () => {
-    // it.only("Should be OK", async () => {});
+    it("Should be OK", async () => {});
 
     it("Should get Ubiquity datas", async () => {
       const datas = await resolver.getUbiquityDatas();

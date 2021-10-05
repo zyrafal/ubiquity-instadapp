@@ -3,6 +3,9 @@ lockfileVersion: 5.3
 specifiers:
   '@ethersproject/abstract-provider': ^5.4.1
   '@ethersproject/address': ^5.4.0
+  '@ethersproject/keccak256': ^5.4.0
+  '@ethersproject/providers': ^5.4.5
+  '@ethersproject/transactions': ^5.4.0
   '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@^0.3.0-beta.11
   '@nomiclabs/hardhat-etherscan': ^2.1.6
   '@nomiclabs/hardhat-waffle': ^2.0.1
@@ -23,11 +26,13 @@ specifiers:
   eslint-plugin-prettier: ^3.4.1
   eslint-plugin-promise: ^5.1.0
   ethereum-waffle: ^3.4.0
+  ethereumjs-tx: ^2.1.2
   ethers: ^5.4.7
   hardhat: ^2.6.4
   hardhat-deploy: ^0.9.2
   hardhat-deploy-ethers: ^0.3.0-beta.11
   hardhat-gas-reporter: ^1.0.4
+  micro-eth-signer: ^0.3.1
   prettier: ^2.4.1
   prettier-plugin-solidity: ^1.0.0-beta.18
   solhint: ^3.3.6
@@ -40,12 +45,15 @@ specifiers:
 devDependencies:
   '@ethersproject/abstract-provider': 5.4.1
   '@ethersproject/address': 5.4.0
+  '@ethersproject/keccak256': 5.4.0
+  '@ethersproject/providers': 5.4.5
+  '@ethersproject/transactions': 5.4.0
   '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.11_ethers@5.4.7+hardhat@2.6.4
   '@nomiclabs/hardhat-etherscan': 2.1.6_hardhat@2.6.4
   '@nomiclabs/hardhat-waffle': 2.0.1_ac54754ba341efd3fb495ccebd3a88b9
   '@nomiclabs/hardhat-web3': 2.0.0_hardhat@2.6.4
   '@openzeppelin/contracts': 3.4.2
-  '@typechain/ethers-v5': 7.1.2_21d15a494ac6c0747fc4bf1eb8ad9d08
+  '@typechain/ethers-v5': 7.1.2_c07e50f122b666d6d4e0003f0328eea5
   '@typechain/hardhat': 2.3.0_hardhat@2.6.4+typechain@5.1.2
   '@types/chai': 4.2.22
   '@types/mocha': 9.0.0
@@ -60,11 +68,13 @@ devDependencies:
   eslint-plugin-prettier: 3.4.1_6e975bd57c7acf028c1a9ddbbf60c898
   eslint-plugin-promise: 5.1.0_eslint@7.32.0
   ethereum-waffle: 3.4.0_typescript@4.4.3
+  ethereumjs-tx: 2.1.2
   ethers: 5.4.7
   hardhat: 2.6.4
   hardhat-deploy: 0.9.2_hardhat@2.6.4
   hardhat-deploy-ethers: 0.3.0-beta.11_ethers@5.4.7+hardhat@2.6.4
   hardhat-gas-reporter: 1.0.4_hardhat@2.6.4
+  micro-eth-signer: 0.3.1
   prettier: 2.4.1
   prettier-plugin-solidity: 1.0.0-beta.18_prettier@2.4.1
   solhint: 3.3.6
@@ -896,7 +906,7 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@typechain/ethers-v5/7.1.2_21d15a494ac6c0747fc4bf1eb8ad9d08:
+  /@typechain/ethers-v5/7.1.2_c07e50f122b666d6d4e0003f0328eea5:
     resolution: {integrity: sha512-sD4HVkTL5aIJa3Ft+CmqiOapba0zzZ8xa+QywcWH40Rm/dcxvZWwcCMnnI3En0JebkxOcAVfH3do+kQ9rKSxYw==}
     peerDependencies:
       '@ethersproject/abi': ^5.0.0
@@ -906,6 +916,7 @@ packages:
       typechain: ^5.0.0
       typescript: '>=4.0.0'
     dependencies:
+      '@ethersproject/providers': 5.4.5
       ethers: 5.4.7
       lodash: 4.17.21
       ts-essentials: 7.0.3_typescript@4.4.3
@@ -6267,6 +6278,19 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
+  /micro-eth-signer/0.3.1:
+    resolution: {integrity: sha512-jXtvs4J72uG+fBgdk8/8avQjnVWlCG/Ayt5g1DoMDKMqyJk2LXvgK4+JASGuwbiKpHOwsd1Kvog19IbWR7R6Ew==}
+    dependencies:
+      js-sha3: 0.8.0
+      micro-rlp: 2.2.9
+      noble-secp256k1: 1.2.10
+    dev: true
+
+  /micro-rlp/2.2.9:
+    resolution: {integrity: sha512-3JARXvs9HIBj8PM7aKT1uHu96csKYv6rjXjwrXcy5MHhk+P5nVvjI12se+zlWhgcMII2/BwP+Pd9YDTF5cuFVg==}
+    hasBin: true
+    dev: true
+
   /micromatch/3.1.10:
     resolution: {integrity: sha512-MWikgl9n9M3w+bpsY3He8L+w9eF9338xRl8IAO5viDizwSzziFEyUzo2xrrloB64ADbTf8uA8vRqqttDTOmccg==}
     engines: {node: '>=0.10.0'}
@@ -6548,6 +6572,10 @@ packages:
 
   /nice-try/1.0.5:
     resolution: {integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==}
+    dev: true
+
+  /noble-secp256k1/1.2.10:
+    resolution: {integrity: sha512-PXlDRYoWD5JHm+fKVx8PsiLVsuYLIp+5ZhO76L//H/q2/YcQZAS59z9aXO7lcq4IMOq8a1U18KXgpijnkz+C5A==}
     dev: true
 
   /node-addon-api/2.0.2:

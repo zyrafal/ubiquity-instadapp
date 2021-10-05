@@ -1,6 +1,6 @@
 import hre from "hardhat";
-import hardhatConfig from "../hardhat.config";
-import type { Signer } from "ethers";
+import hardhatConfig from "../../hardhat.config";
+import type { Signer, BigNumber } from "ethers";
 
 async function forkReset(blockNumber: number) {
   await hre.network.provider.request({
@@ -16,10 +16,10 @@ async function forkReset(blockNumber: number) {
   });
 }
 
-async function sendEth(from: Signer, to: string, amount: number) {
+async function sendEth(from: Signer, to: string, value: BigNumber) {
   await from.sendTransaction({
     to,
-    value: hre.ethers.BigNumber.from(10).pow(18).mul(amount)
+    value
   });
 }
 

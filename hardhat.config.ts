@@ -29,9 +29,10 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   namedAccounts: {
     deployer: { default: 0 },
+    signer: { default: 0 },
     tester: { default: 1 },
     uadWhale: "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd",
-    ethWhale: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+    ethWhale: "0x1b3cB81E51011b549d78bf720b0d924ac763A7C2"
   },
   networks: {
     hardhat: {
@@ -43,6 +44,10 @@ const config: HardhatUserConfig = {
       accounts: [
         {
           privateKey: process.env.PRIVATE_KEY_1 ? process.env.PRIVATE_KEY_1 : "",
+          balance: "1000000000000000000000"
+        },
+        {
+          privateKey: process.env.PRIVATE_KEY_2 ? process.env.PRIVATE_KEY_2 : "",
           balance: "1000000000000000000000"
         }
       ]
@@ -105,7 +110,8 @@ const config: HardhatUserConfig = {
     artifacts: "artifacts"
   },
   mocha: {
-    timeout: 1000000
+    timeout: 1000000,
+    bail: true
   }
 };
 

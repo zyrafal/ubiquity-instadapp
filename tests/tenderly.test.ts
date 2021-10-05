@@ -1,41 +1,125 @@
-import type { SignerWithAddress } from "hardhat-deploy-ethers/dist/src/signers";
 import { expect } from "chai";
+import type { HardhatRuntimeEnvironment } from "hardhat/types";
+import type { Signer, BigNumber } from "ethers";
 import hre from "hardhat";
-const { ethers, deployments } = hre;
-import { BigNumber, utils } from "ethers";
-import { sendEth } from "./utils";
+import { sendTx, sendTxEth } from "./utils/sendTx";
+
+const { ethers, network, getNamedAccounts } = hre;
+const { provider, getSigners, utils } = ethers;
 
 describe("Tenderly fork", function () {
+  let networkName: string;
   let chainId: number | undefined;
-  let deployer: SignerWithAddress;
-  let tester: SignerWithAddress;
-  let uadWhale: SignerWithAddress;
+  let deployerSigner: Signer;
+  let deployer: string;
+  let tester: string;
+  let ethWhale: string;
+  const url = `https://rpc.tenderly.co/fork/${process.env.TENDERLY_FORK_ID}`;
+
+  const balance = async (address: string): Promise<string> => {
+    return utils.formatEther(await provider.getBalance(address));
+  };
 
   before(async () => {
-    const network = hre.network.name;
-    const live = hre.network.live;
-    chainId = hre.network.config.chainId;
-    console.log("network", network, chainId, live);
+    const live = network.live;
+    networkName = network.name;
+    chainId = network.config.chainId;
+    console.log("network", networkName, chainId, live);
 
-    ({ deployer, tester, uadWhale } = await ethers.getNamedSigners());
+    ({ deployer, tester, ethWhale } = await getNamedAccounts());
+    // deployerSigner = provider.getSigner(deployer);
+    [deployerSigner] = await getSigners();
+  });
 
-    // deploy resolver ?
-    // await deployments.fixture(["InstaUbiquityResolver"]);
+  afterEach(async () => {
+    console.log(`ethWhale ${await balance(ethWhale)}`);
+    console.log(`deployer ${await balance(deployer)}`);
+    console.log(`tester   ${await balance(tester)}`);
   });
 
   it("Should be OK", async function () {});
 
-  it("Should get balance", async function () {
-    console.log(`Balance ${deployer.address} ${utils.formatEther(await deployer.getBalance())}`);
+  it("Should send ETH from deployer with ethersjs", async function () {
+    const balance0 = await provider.getBalance(tester);
+    const value = ethers.BigNumber.from(10).pow(14);
+
+    await deployerSigner.sendTransaction({
+      from: deployer,
+      to: tester,
+      value
+    });
+
+    const balance1 = await provider.getBalance(tester);
+    expect(balance1).to.be.equal(balance0.add(value));
   });
 
-  it("Should send ETH", async function () {
-    console.log(`Balance ${deployer.address} ${utils.formatEther(await deployer.getBalance())}`);
-    console.log(`Balance ${tester.address} ${utils.formatEther(await tester.getBalance())}`);
+  it("Should send ETH from deployer with sendTx", async function () {
+    const balance0 = await provider.getBalance(tester);
+    const value = ethers.BigNumber.from(10).pow(14);
 
-    await sendEth(deployer, tester.address, 100);
+    await sendTx(url, {
+      from: deployer,
+      to: tester,
+      value: utils.hexStripZeros(utils.hexlify(value))
+    });
 
-    console.log(`Balance ${deployer.address} ${utils.formatEther(await deployer.getBalance())}`);
-    console.log(`Balance ${tester.address} ${utils.formatEther(await tester.getBalance())}`);
+    const balance1 = await provider.getBalance(tester);
+    expect(balance1).to.be.equal(balance0.add(value));
+  });
+
+  it("Should send ETH from deployer with sendTxEth", async function () {
+    const balance0 = await provider.getBalance(tester);
+    const value = ethers.BigNumber.from(10).pow(14);
+
+    await sendTxEth(url, deployer, tester, value);
+
+    const balance1 = await provider.getBalance(tester);
+    expect(balance1).to.be.equal(balance0.add(value));
+  });
+
+  it("Should send ETH from ethWhale !", async function () {
+    const balance0 = await provider.getBalance(tester);
+    const value = ethers.BigNumber.from(10).pow(20);
+
+    const tx = {
+      from: ethWhale,
+      to: tester,
+      value: utils.hexStripZeros(utils.hexlify(value))
+    };
+    console.log("tx", tx);
+    await sendTx(url, tx);
+
+    const balance1 = await provider.getBalance(tester);
+    expect(balance1).to.be.equal(balance0.add(value));
+  });
+
+  it("Should send ETH from ethWhale ! after populate by ethersjs", async function () {
+    const balance0 = await provider.getBalance(tester);
+    const value = ethers.BigNumber.from(10).pow(20);
+
+    const tx = await deployerSigner.populateTransaction({
+      from: deployer,
+      to: tester,
+      gasLimit: ethers.BigNumber.from(10).pow(9),
+      value
+    });
+    console.log("tx", tx);
+    // await deployerSigner.sendTransaction(tx);
+    const tx1 = {
+      from: ethWhale,
+      to: tx.to,
+      value: utils.hexStripZeros(utils.hexlify(tx.value || 0)),
+      maxFeePerGas: utils.hexStripZeros(utils.hexlify(tx.maxFeePerGas || 0)),
+      maxPriorityFeePerGas: utils.hexStripZeros(utils.hexlify(tx.value || 0)),
+      gasLimit: utils.hexStripZeros(utils.hexlify(tx.gasLimit || 0)),
+      type: utils.hexStripZeros(utils.hexlify(tx.type || 0)),
+      nonce: utils.hexStripZeros(utils.hexlify(tx.nonce || 0)),
+      chainId: utils.hexStripZeros(utils.hexlify(tx.chainId || 0))
+    };
+    console.log("tx1", tx1);
+    await sendTx(url, tx1);
+
+    const balance1 = await provider.getBalance(tester);
+    expect(balance1).to.be.equal(balance0.add(value));
   });
 });
