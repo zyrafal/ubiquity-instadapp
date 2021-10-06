@@ -1,23 +1,13 @@
 import type { SignerWithAddress } from "hardhat-deploy-ethers/dist/src/signers";
 import { expect } from "chai";
-import hre from "hardhat";
 import { BigNumber, Contract, utils } from "ethers";
+import hre from "hardhat";
 const { ethers, waffle } = hre;
 const { provider } = ethers;
-const { deployContract } = waffle;
 
-import { sendTx, sendTxEth } from "./utils/sendTx";
-
-import deployAndEnableConnector from "../scripts/deployAndEnableConnector.js";
 import encodeSpells from "../scripts/encodeSpells";
 import addresses from "../scripts/constant/addresses";
 import abis from "../scripts/constant/abis";
-
-import impersonate from "../scripts/impersonate";
-import { forkReset, sendEth } from "./utils/utils";
-import { ConnectV2Ubiquity } from "../artifacts/types";
-
-import connectV2UbiquityArtifacts from "../artifacts/contracts/connector/main.sol/ConnectV2Ubiquity.json";
 
 import instaImplementationsM1 from "../scripts/constant/abi/core/InstaImplementationM1.json";
 
@@ -34,7 +24,6 @@ describe("Ubiquity connector", function () {
   const POOL3 = "0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7";
   const UAD3CRVF = "0x20955CB69Ae1515962177D164dfC9522feef567E";
 
-  const blockFork = 13165306;
   const one = BigNumber.from(10).pow(18);
   const onep = BigNumber.from(10).pow(6);
   const ABI = [
@@ -42,11 +31,14 @@ describe("Ubiquity connector", function () {
     "function allowance(address owner, address spender) external view returns (uint256)",
     "function transfer(address to, uint amount) returns (boolean)",
     "function remove_liquidity_one_coin(uint256 _burn_amount, int128 i, uint256 _min_received) external returns (uint256)",
-    "function add_liquidity(uint256[3],uint256) returns (uint256)",
     "function approve(address, uint256) external",
     "function holderTokens(address) view returns (uint256[])",
     "function getBond(uint256) view returns (tuple(address,uint256,uint256,uint256,uint256,uint256))"
   ];
+
+  const ABI2 = ["function add_liquidity(uint256[2],uint256) returns (uint256)"];
+  const ABI3 = ["function add_liquidity(uint256[3],uint256)"];
+
   let dsa: Contract;
   let POOL3Contract: Contract;
   let CRV3Contract: Contract;
@@ -88,9 +80,9 @@ describe("Ubiquity connector", function () {
     live = hre.network.live;
     console.log("network", network, chainId, live);
 
-    POOL3Contract = new ethers.Contract(POOL3, ABI, provider);
+    POOL3Contract = new ethers.Contract(POOL3, ABI.concat(ABI3), provider);
     CRV3Contract = new ethers.Contract(CRV3, ABI, provider);
-    uAD3CRVfContract = new ethers.Contract(UAD3CRVF, ABI, provider);
+    uAD3CRVfContract = new ethers.Contract(UAD3CRVF, ABI.concat(ABI2), provider);
     uADContract = new ethers.Contract(UAD, ABI, provider);
     DAIContract = new ethers.Contract(DAI, ABI, provider);
     USDCContract = new ethers.Contract(USDC, ABI, provider);
@@ -117,6 +109,8 @@ describe("Ubiquity connector", function () {
   });
 
   const dsaDepositUAD3CRVf = async (amount: number) => {
+    await uADContract.connect(deployer).approve(uAD3CRVfContract.address, one.mul(amount).mul(2));
+    await uAD3CRVfContract.connect(deployer).add_liquidity([one.mul(amount).mul(2), 0], 0);
     await uAD3CRVfContract.connect(deployer).transfer(dsa.address, one.mul(amount));
   };
 

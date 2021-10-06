@@ -11,7 +11,7 @@ const addresses = {
       unipool: "0x22bddA39D14eD0aafeee36B6e784602fdDE64723",
       liquity: "0xDAf2A39503463B0F41f899EDD82213b3c96b6Cf8",
       reflexer: "0x016ca8d0993d1a7073b01802a2e22fd0df7e633a",
-      ubiquity: "0xEaf624Ea9ba942CA9D3e65888e9EC30e904229C3"
+      ubiquity: "0x636BeA69422e087eA87Ae6A98300065C11826b2C"
     }
   },
 

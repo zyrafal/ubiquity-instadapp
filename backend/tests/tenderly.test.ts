@@ -1,8 +1,7 @@
-import { expect } from "chai";
-import type { HardhatRuntimeEnvironment } from "hardhat/types";
-import type { Signer, BigNumber } from "ethers";
 import hre from "hardhat";
-import { sendTx, sendTxEth } from "./utils/sendTx";
+import { expect } from "chai";
+import { sendTx, sendTxEth } from "../scripts/sendTx";
+import type { Signer } from "ethers";
 
 const { ethers, network, getNamedAccounts } = hre;
 const { provider, getSigners, utils } = ethers;

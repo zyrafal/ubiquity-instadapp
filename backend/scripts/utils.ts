@@ -1,5 +1,5 @@
 import hre from "hardhat";
-import hardhatConfig from "../../hardhat.config";
+import hardhatConfig from "../hardhat.config";
 import type { Signer, BigNumber } from "ethers";
 
 async function forkReset(blockNumber: number) {
