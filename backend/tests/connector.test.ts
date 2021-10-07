@@ -101,19 +101,20 @@ describe("Ubiquity connector", function () {
     const event = receipt.events.find((a: any) => a.event === "LogAccountCreated");
     const dsaAddress: string = event.args.account;
     dsa = (await ethers.getContractAt(instaImplementationsM1, dsaAddress)).connect(deployer);
+    await deployer.sendTransaction({ to: dsaAddress, value: one.mul(100) });
   });
 
   afterEach(async () => {
     console.log("deployer       eth", utils.formatEther(await ethers.provider.getBalance(deployer.address)));
     console.log("deployer       uad", utils.formatEther(await uADContract.balanceOf(deployer.address)));
     console.log("deployer uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(deployer.address)));
-    console.log("tester         eth", utils.formatEther(await ethers.provider.getBalance(testerAddress)));
-    console.log("tester         uad", utils.formatEther(await uADContract.balanceOf(testerAddress)));
-    console.log("tester   uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(testerAddress)));
     console.log("dsa            eth", utils.formatEther(await ethers.provider.getBalance(dsa.address)));
-    console.log("dsa            uad", utils.formatEther(await uADContract.balanceOf(dsa.address)));
-    console.log("dsa      uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(dsa.address)));
     console.log("dsa            dai", utils.formatEther(await DAIContract.balanceOf(dsa.address)));
+    console.log("dsa           usdc", utils.formatUnits(await USDCContract.balanceOf(dsa.address), 6));
+    console.log("dsa           usdt", utils.formatUnits(await USDTContract.balanceOf(dsa.address), 6));
+    console.log("dsa            uad", utils.formatEther(await uADContract.balanceOf(dsa.address)));
+    console.log("dsa           3CRV", utils.formatEther(await CRV3Contract.balanceOf(dsa.address)));
+    console.log("dsa      uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(dsa.address)));
     console.log("dsa          bonds", utils.formatEther(await bondingShareLpAmount(dsa.address)));
   });
 
@@ -171,9 +172,9 @@ describe("Ubiquity connector", function () {
     await USDTContract.connect(tester).transfer(dsa.address, onep.mul(amount));
   };
 
-  it("Should be OK", async function () {});
-
   describe("DSA wallet setup", function () {
+    it("Should be OK", async function () {});
+
     it("Should have contracts deployed.", async function () {
       expect(POOL3Contract.address).to.be.properAddress;
       expect(CRV3Contract.address).to.be.properAddress;
