@@ -51,6 +51,7 @@ describe("Ubiquity connector", function () {
   let instaIndex: Contract;
 
   let deployer: SignerWithAddress;
+  let tester: SignerWithAddress;
 
   const bondingShareLpAmount = async function (address: string) {
     let LP = 0;
@@ -66,14 +67,20 @@ describe("Ubiquity connector", function () {
   let chainId: number | undefined;
   let live: boolean;
 
+  let testerAddress: string;
   let ethWhaleAddress: string;
   let uadWhaleAddress: string;
   let ethWhale: SignerWithAddress;
   let uadWhale: SignerWithAddress;
 
   before(async () => {
-    deployer = await ethers.getNamedSigner("deployer");
-    ({ ethWhale: ethWhaleAddress, uadWhale: uadWhaleAddress } = await hre.getNamedAccounts());
+    deployer = await ethers.getNamedSigner("tester");
+    ({ ethWhale: ethWhaleAddress, uadWhale: uadWhaleAddress, tester: testerAddress } = await hre.getNamedAccounts());
+    await hre.network.provider.request({
+      method: "hardhat_impersonateAccount",
+      params: [testerAddress]
+    });
+    tester = await ethers.getSigner(testerAddress);
 
     network = hre.network.name;
     chainId = hre.network.config.chainId;
@@ -89,77 +96,79 @@ describe("Ubiquity connector", function () {
     USDTContract = new ethers.Contract(USDT, ABI, provider);
     BONDContract = new ethers.Contract(BOND, ABI, provider);
 
-    instaIndex = new ethers.Contract(addresses.core.instaIndex, abis.core.instaIndex, deployer);
-
-    const receipt = await (await instaIndex.build(deployer.address, 2, deployer.address)).wait();
+    instaIndex = new ethers.Contract(addresses.core.instaIndex, abis.core.instaIndex, provider);
+    const receipt = await (await instaIndex.connect(deployer).build(deployer.address, 2, deployer.address)).wait();
     const event = receipt.events.find((a: any) => a.event === "LogAccountCreated");
     const dsaAddress: string = event.args.account;
     dsa = (await ethers.getContractAt(instaImplementationsM1, dsaAddress)).connect(deployer);
   });
 
-  beforeEach(async () => {
+  afterEach(async () => {
     console.log("deployer       eth", utils.formatEther(await ethers.provider.getBalance(deployer.address)));
-    console.log("dsa            eth", utils.formatEther(await ethers.provider.getBalance(dsa.address)));
     console.log("deployer       uad", utils.formatEther(await uADContract.balanceOf(deployer.address)));
-    console.log("dsa            uad", utils.formatEther(await uADContract.balanceOf(dsa.address)));
     console.log("deployer uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(deployer.address)));
+    console.log("tester         eth", utils.formatEther(await ethers.provider.getBalance(testerAddress)));
+    console.log("tester         uad", utils.formatEther(await uADContract.balanceOf(testerAddress)));
+    console.log("tester   uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(testerAddress)));
+    console.log("dsa            eth", utils.formatEther(await ethers.provider.getBalance(dsa.address)));
+    console.log("dsa            uad", utils.formatEther(await uADContract.balanceOf(dsa.address)));
     console.log("dsa      uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(dsa.address)));
     console.log("dsa            dai", utils.formatEther(await DAIContract.balanceOf(dsa.address)));
     console.log("dsa          bonds", utils.formatEther(await bondingShareLpAmount(dsa.address)));
   });
 
   const dsaDepositUAD3CRVf = async (amount: number) => {
-    await uADContract.connect(deployer).approve(uAD3CRVfContract.address, one.mul(amount).mul(2));
-    await uAD3CRVfContract.connect(deployer).add_liquidity([one.mul(amount).mul(2), 0], 0);
-    await uAD3CRVfContract.connect(deployer).transfer(dsa.address, one.mul(amount));
+    await uADContract.connect(tester).approve(uAD3CRVfContract.address, one.mul(amount).mul(2));
+    await uAD3CRVfContract.connect(tester).add_liquidity([one.mul(amount).mul(2), 0], 0);
+    await uAD3CRVfContract.connect(tester).transfer(dsa.address, one.mul(amount));
   };
 
   const dsaDepositUAD = async (amount: number) => {
     await uAD3CRVfContract
-      .connect(deployer)
+      .connect(tester)
       .remove_liquidity_one_coin(one.mul(amount).mul(110).div(100), 0, one.mul(amount));
-    await uADContract.connect(deployer).transfer(dsa.address, one.mul(amount));
+    await uADContract.connect(tester).transfer(dsa.address, one.mul(amount));
   };
 
   const dsaDepositCRV3 = async (amount: number) => {
     await uAD3CRVfContract
-      .connect(deployer)
+      .connect(tester)
       .remove_liquidity_one_coin(one.mul(amount).mul(110).div(100), 1, one.mul(amount));
-    await CRV3Contract.connect(deployer).transfer(dsa.address, one.mul(amount));
+    await CRV3Contract.connect(tester).transfer(dsa.address, one.mul(amount));
   };
 
   const dsaDepositDAI = async (amount: number) => {
     await uAD3CRVfContract
-      .connect(deployer)
+      .connect(tester)
       .remove_liquidity_one_coin(one.mul(amount).mul(120).div(100), 1, one.mul(amount).mul(110).div(100));
-    await POOL3Contract.connect(deployer).remove_liquidity_one_coin(
+    await POOL3Contract.connect(tester).remove_liquidity_one_coin(
       one.mul(amount).mul(110).div(100),
       0,
       one.mul(amount)
     );
-    await DAIContract.connect(deployer).transfer(dsa.address, one.mul(amount));
+    await DAIContract.connect(tester).transfer(dsa.address, one.mul(amount));
   };
   const dsaDepositUSDC = async (amount: number) => {
     await uAD3CRVfContract
-      .connect(deployer)
+      .connect(tester)
       .remove_liquidity_one_coin(one.mul(amount).mul(120).div(100), 1, one.mul(amount).mul(110).div(100));
-    await POOL3Contract.connect(deployer).remove_liquidity_one_coin(
+    await POOL3Contract.connect(tester).remove_liquidity_one_coin(
       one.mul(amount).mul(110).div(100),
       1,
       onep.mul(amount)
     );
-    await USDCContract.connect(deployer).transfer(dsa.address, onep.mul(amount));
+    await USDCContract.connect(tester).transfer(dsa.address, onep.mul(amount));
   };
   const dsaDepositUSDT = async (amount: number) => {
     await uAD3CRVfContract
-      .connect(deployer)
+      .connect(tester)
       .remove_liquidity_one_coin(one.mul(amount).mul(120).div(100), 1, one.mul(amount).mul(110).div(100));
-    await POOL3Contract.connect(deployer).remove_liquidity_one_coin(
+    await POOL3Contract.connect(tester).remove_liquidity_one_coin(
       one.mul(amount).mul(110).div(100),
       2,
       onep.mul(amount)
     );
-    await USDTContract.connect(deployer).transfer(dsa.address, onep.mul(amount));
+    await USDTContract.connect(tester).transfer(dsa.address, onep.mul(amount));
   };
 
   it("Should be OK", async function () {});

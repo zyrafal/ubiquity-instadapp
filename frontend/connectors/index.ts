@@ -19,7 +19,7 @@ export const injected = new InjectedConnector({
 
 export const walletconnect = new WalletConnectConnector({
   rpc: {
-    1: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
+    1: `http://127.0.0.1:8545`,
     137: "https://rpc-mainnet.maticvigil.com"
   },
   supportedChainIds: [1, 137]
@@ -51,12 +51,12 @@ const POLLING_INTERVAL = 12000;
 
 export enum LedgerDerivationPath {
   "Legacy" = "44'/60'/0'/x",
-  "LedgerLive" = "44'/60'/x'/0/0"
+  "LedgerLive" = "44'/60'/x'/0/4"
 }
 
 export const ledger = new LedgerConnector({
   chainId: 1,
-  url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
+  url: `http://127.0.0.1:8545`,
   pollingInterval: POLLING_INTERVAL,
   baseDerivationPath: LedgerDerivationPath.LedgerLive,
   accountsOffset: 0,

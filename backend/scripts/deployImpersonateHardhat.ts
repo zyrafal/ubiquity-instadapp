@@ -19,7 +19,7 @@ async function deployImpersonateHardhat(
   hre: HardhatRuntimeEnvironment
 ) {
   const { ethers, network, getNamedAccounts } = hre;
-  const { ethWhale: ethWhaleAddress, uadWhale: uadWhaleAddress } = await getNamedAccounts();
+  const { ethWhale: ethWhaleAddress, uadWhale: uadWhaleAddress, tester: testerAddress } = await getNamedAccounts();
 
   const one = BigNumber.from(10).pow(18);
   const ubiquityTest = "Ubiquity-v1";
@@ -38,24 +38,35 @@ async function deployImpersonateHardhat(
   const masterAddress = await instaIndex.master();
   const instaConnectorsV2 = new ethers.Contract(addresses.core.connectorsV2, abis.core.connectorsV2, ethers.provider);
 
+  // ETH UAD whales
   impersonate(ethWhaleAddress, network.provider);
   impersonate(uadWhaleAddress, network.provider);
-  impersonate(masterAddress, network.provider);
-
   let ethWhale = await ethers.getSigner(ethWhaleAddress);
   let uadWhale = await ethers.getSigner(uadWhaleAddress);
-  await ethWhale.sendTransaction({ to: deployer.address, value: one.mul(1000) });
-  await uADContract.connect(uadWhale).transfer(deployer.address, one.mul(10000));
-  await uADContract.connect(deployer).approve(uAD3CRVfContract.address, one.mul(2000));
-  await uAD3CRVfContract.connect(deployer).add_liquidity([one.mul(2000), 0], 0);
 
+  // whales SEND ETH, UAD, UAD3CRV-f to deployer
+  await ethWhale.sendTransaction({ to: deployer.address, value: one.mul(2000) });
+  await uADContract.connect(uadWhale).transfer(deployer.address, one.mul(11000));
+  await uADContract.connect(deployer).approve(uAD3CRVfContract.address, one.mul(3000));
+  await uAD3CRVfContract.connect(deployer).add_liquidity([one.mul(3000), 0], 0);
+
+  // InstaDapp master
+  impersonate(masterAddress, network.provider);
   let master = await ethers.getSigner(masterAddress);
   await deployer.sendTransaction({ to: masterAddress, value: one.mul(100) });
   await instaConnectorsV2.connect(master).addConnectors([ubiquityTest], [connectV2UbiquityAddress]);
 
+  // deployer SEND ETH, UAD, UAD3CRV-f to tester
+  await deployer.sendTransaction({ to: testerAddress, value: one.mul(1000) });
+  await uADContract.connect(deployer).transfer(testerAddress, one.mul(5000));
+  await uAD3CRVfContract.connect(deployer).transfer(testerAddress, one.mul(2000));
+
   console.log("deployer       eth", ethers.utils.formatEther(await ethers.provider.getBalance(deployer.address)));
   console.log("deployer       uad", ethers.utils.formatEther(await uADContract.balanceOf(deployer.address)));
-  console.log("deployer uad3CRV-f", ethers.utils.formatEther(await uAD3CRVfContract.balanceOf(deployer.address)));
+  console.log("deployer uad3CRV-f", ethers.utils.formatEther(await ethers.provider.getBalance(deployer.address)));
+  console.log("tester         eth", ethers.utils.formatEther(await ethers.provider.getBalance(testerAddress)));
+  console.log("tester         uad", ethers.utils.formatEther(await uADContract.balanceOf(testerAddress)));
+  console.log("tester   uad3CRV-f", ethers.utils.formatEther(await uAD3CRVfContract.balanceOf(testerAddress)));
 }
 
 export default deployImpersonateHardhat;

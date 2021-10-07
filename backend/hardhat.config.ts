@@ -25,7 +25,7 @@ const config: HardhatUserConfig = {
   namedAccounts: {
     deployer: { default: 0 },
     signer: { default: 0 },
-    tester: { default: 1 },
+    tester: process.env.PUBLIC_KEY || "",
     uadWhale: "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd",
     ethWhale: "0x1b3cB81E51011b549d78bf720b0d924ac763A7C2"
   },
@@ -34,7 +34,7 @@ const config: HardhatUserConfig = {
       chainId: 1,
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-        blockNumber: 13165306
+        blockNumber: 13370340
       },
       accounts: [
         {
