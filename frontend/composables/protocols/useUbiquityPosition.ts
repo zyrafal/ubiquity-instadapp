@@ -79,5 +79,5 @@ export function useUbiquityPosition() {
 
   onEvent("protocol::ubiquity::refresh", fetchPosition);
 
-  return { addresses: ubqAddresses, datas, inventory };
+  return { addresses: ubqAddresses, datas, inventory, fetchPosition };
 }

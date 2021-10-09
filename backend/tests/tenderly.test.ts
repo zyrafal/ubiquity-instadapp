@@ -37,9 +37,9 @@ describe("Tenderly fork", function () {
   });
 
   describe("Tenderly fork", function () {
-    if (networkName == "tenderly") {
-      it("Should be OK", async function () {});
+    it("Should be OK", async function () {});
 
+    if (networkName == "tenderly") {
       it("Should send ETH from deployer with ethersjs", async function () {
         const balance0 = await provider.getBalance(tester);
         const value = ethers.BigNumber.from(10).pow(14);
@@ -123,6 +123,8 @@ describe("Tenderly fork", function () {
         const balance1 = await provider.getBalance(tester);
         expect(balance1).to.be.equal(balance0.add(value));
       });
+    } else {
+      console.log("Tenderly tests only on tenderly network", networkName);
     }
   });
 });

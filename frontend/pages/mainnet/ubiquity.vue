@@ -135,6 +135,18 @@
         </div>
       </div>
 
+      <div class="mx-auto w-[512px] shadow rounded-[10px] px-8 py-12 mt-[40px]">
+        <div class="mt-7">
+          <button
+            class="flex items-center justify-center flex-shrink-0 py-2 font-semibold text-white whitespace-no-wrap duration-75 ease-out transform rounded-[4px] select-none bg-ocean-blue-pure shadow-cta focus:outline-none dark:shadow-none px-8 h-16 w-full hover:-translate-y-px active:translate-y-px"
+            @click="openSupply"
+          >
+            Deposit
+            <!---->
+          </button>
+        </div>
+      </div>
+
       <div class="mt-[60px]" v-if="position">
         <div
           class="w-full flex flex-col mt-6 sm:flex-row sm:items-center sm:justify-between xl:mt-4"
@@ -259,18 +271,6 @@
               <SVGBalance class="h-12" />
             </div>
           </div>
-        </div>
-      </div>
-
-      <div class="mx-auto w-[512px] shadow rounded-[10px] px-8 py-12 mt-[40px]">
-        <div class="mt-7">
-          <button
-            class="flex items-center justify-center flex-shrink-0 py-2 font-semibold text-white whitespace-no-wrap duration-75 ease-out transform rounded-[4px] select-none bg-ocean-blue-pure shadow-cta focus:outline-none dark:shadow-none px-8 h-16 w-full hover:-translate-y-px active:translate-y-px"
-            @click="openSupply"
-          >
-            Deposit
-            <!---->
-          </button>
         </div>
       </div>
     </div>
