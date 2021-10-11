@@ -16,11 +16,11 @@ const deployInstaUbiquityConnectorFunction: DeployFunction = async function (hre
   });
 
   if (deployResult.newlyDeployed) {
-    if (network.name == "hardhat") {
-      await deployImpersonateHardhat(deployer, deployResult.address, hre);
-    } else if (network.name == "tenderly") {
-      await deployImpersonateTenderly(deployer, deployResult.address, hre);
-    }
+    // if (network.name == "hardhat") {
+    //   await deployImpersonateHardhat(deployer, deployResult.address, hre);
+    // } else if (network.name == "tenderly") {
+    //   await deployImpersonateTenderly(deployer, deployResult.address, hre);
+    // }
     // addresses.connectors[ubiquityTest] = connector.address;
   }
 };
