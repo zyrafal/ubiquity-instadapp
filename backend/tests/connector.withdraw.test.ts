@@ -8,6 +8,7 @@ const { provider } = ethers;
 import encodeSpells from "../scripts/encodeSpells";
 import addresses from "../scripts/constant/addresses";
 import abis from "../scripts/constant/abis";
+import hardhatConfig from "../hardhat.config";
 
 import instaImplementationsM1 from "../scripts/constant/abi/core/InstaImplementationM1.json";
 
@@ -24,6 +25,7 @@ describe("Ubiquity connector", function () {
   const POOL3 = "0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7";
   const UAD3CRVF = "0x20955CB69Ae1515962177D164dfC9522feef567E";
 
+  const blockFork = 13097100;
   const one = BigNumber.from(10).pow(18);
   const onep = BigNumber.from(10).pow(6);
   const ABI = [
@@ -52,10 +54,26 @@ describe("Ubiquity connector", function () {
 
   let deployer: SignerWithAddress;
 
+  async function forkReset(blockNumber: number) {
+    await hre.network.provider.request({
+      method: "hardhat_reset",
+      params: [
+        {
+          forking: {
+            jsonRpcUrl: hardhatConfig?.networks?.hardhat?.forking?.url,
+            blockNumber
+          }
+        }
+      ]
+    });
+  }
+
   const bondingShareLpAmount = async function (address: string) {
     let LP = 0;
     const bondIds = await BONDContract.holderTokens(address);
     if (bondIds.length) {
+      console.log("dsa         bondId", bondIds[0].toString());
+
       const bond = await BONDContract.getBond(bondIds[0]);
       LP = bond[5];
     }
@@ -72,7 +90,9 @@ describe("Ubiquity connector", function () {
   let ethWhale: SignerWithAddress;
   let uadWhale: SignerWithAddress;
 
-  before(async () => {
+  beforeEach(async () => {
+    // await forkReset(blockFork);
+
     deployer = await ethers.getNamedSigner("deployer");
     ({
       ethWhale: ethWhaleAddress,
@@ -98,7 +118,6 @@ describe("Ubiquity connector", function () {
     const event = receipt.events.find((a: any) => a.event === "LogAccountCreated");
     const dsaAddress: string = event.args.account;
     dsa = (await ethers.getContractAt(instaImplementationsM1, dsaAddress)).connect(deployer);
-
     // if (network == "hardhat")
     // {
     //   await deployer.sendTransaction({ to: dsaAddress, value: one.mul(100) });
@@ -119,7 +138,7 @@ describe("Ubiquity connector", function () {
     console.log("dsa            uad", utils.formatEther(await uADContract.balanceOf(dsa.address)));
     console.log("dsa           3CRV", utils.formatEther(await CRV3Contract.balanceOf(dsa.address)));
     console.log("dsa      uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(dsa.address)));
-    console.log("dsa        n bonds", utils.formatEther(await BONDContract.holderTokens(dsa.address)).length);
+    console.log("dsa        n bonds", (await BONDContract.holderTokens(dsa.address)).length);
     console.log("dsa       lp bonds", utils.formatEther(await bondingShareLpAmount(dsa.address)));
   });
 
@@ -180,64 +199,6 @@ describe("Ubiquity connector", function () {
   describe("DSA wallet setup", function () {
     it("Should be OK", async function () {});
 
-    it("Should have contracts deployed.", async function () {
-      expect(POOL3Contract.address).to.be.properAddress;
-      expect(CRV3Contract.address).to.be.properAddress;
-      expect(uADContract.address).to.be.properAddress;
-      expect(uAD3CRVfContract.address).to.be.properAddress;
-      expect(DAIContract.address).to.be.properAddress;
-      expect(USDCContract.address).to.be.properAddress;
-      expect(USDTContract.address).to.be.properAddress;
-      expect(BONDContract.address).to.be.properAddress;
-      expect(instaIndex.address).to.be.properAddress;
-      expect(dsa.address).to.be.properAddress;
-    });
-    it("Should deposit uAD3CRVf into DSA wallet", async function () {
-      await dsaDepositUAD3CRVf(100);
-      expect(await uAD3CRVfContract.balanceOf(dsa.address)).to.be.gte(one.mul(100));
-    });
-    it("Should deposit uAD into DSA wallet", async function () {
-      await dsaDepositUAD(100);
-      expect(await uADContract.balanceOf(dsa.address)).to.be.gte(one.mul(100));
-    });
-    it("Should deposit 3CRV into DSA wallet", async function () {
-      await dsaDepositCRV3(100);
-      expect(await CRV3Contract.balanceOf(dsa.address)).to.be.gte(one.mul(100));
-    });
-    it("Should deposit DAI into DSA wallet", async function () {
-      await dsaDepositDAI(100);
-      expect(await DAIContract.balanceOf(dsa.address)).to.be.gte(one.mul(100));
-    });
-    it("Should deposit USDC into DSA wallet", async function () {
-      await dsaDepositUSDC(100);
-      expect(await USDCContract.balanceOf(dsa.address)).to.be.gte(onep.mul(100));
-    });
-    it("Should deposit USDT into DSA wallet", async function () {
-      await dsaDepositUSDT(100);
-      expect(await USDTContract.balanceOf(dsa.address)).to.be.gte(onep.mul(100));
-    });
-  });
-
-  describe("Main", function () {
-    it("should deposit uAD3CRVf to get Ubiquity Bonding Shares", async function () {
-      await dsaDepositUAD3CRVf(100);
-      console.log("dsa      uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(dsa.address)));
-
-      await expect(
-        dsa.cast(
-          ...encodeSpells([
-            {
-              connector: ubiquityTest,
-              method: "deposit",
-              args: [UAD3CRVF, one, 4, 0, 0]
-            }
-          ]),
-          uadWhaleAddress
-        )
-      ).to.be.not.reverted;
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
-    });
-
     it("should deposit uAD to get Ubiquity Bonding Shares", async function () {
       await dsaDepositUAD(100);
       await expect(
@@ -249,80 +210,27 @@ describe("Ubiquity connector", function () {
               args: [UAD, one, 4, 0, 0]
             }
           ]),
-          uadWhaleAddress
+          deployer.address
         )
       ).to.be.not.reverted;
+
       expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
     });
 
-    it("should deposit 3CRV to get Ubiquity Bonding Shares", async function () {
-      await dsaDepositCRV3(100);
+    it("Should withdraw Ubiquity Bonding Shares to get back uAD", async function () {
       await expect(
         dsa.cast(
           ...encodeSpells([
             {
               connector: ubiquityTest,
-              method: "deposit",
-              args: [CRV3, one, 4, 0, 0]
+              method: "withdraw",
+              args: [34, UAD, 0, 0]
             }
           ]),
-          uadWhaleAddress
+          deployer.address
         )
       ).to.be.not.reverted;
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
-    });
-
-    it("should deposit DAI to get Ubiquity Bonding Shares", async function () {
-      await dsaDepositDAI(100);
-      await expect(
-        dsa.cast(
-          ...encodeSpells([
-            {
-              connector: ubiquityTest,
-              method: "deposit",
-              args: [DAI, one.mul(100), 4, 0, 0]
-            }
-          ]),
-          uadWhaleAddress
-        )
-      ).to.be.not.reverted;
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
-    });
-
-    it("should deposit USDC to get Ubiquity Bonding Shares", async function () {
-      await dsaDepositUSDC(100);
-
-      await expect(
-        dsa.cast(
-          ...encodeSpells([
-            {
-              connector: ubiquityTest,
-              method: "deposit",
-              args: [USDC, onep.mul(100), 4, 0, 0]
-            }
-          ]),
-          uadWhaleAddress
-        )
-      ).to.be.not.reverted;
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
-    });
-
-    it("should deposit USDT to get Ubiquity Bonding Shares", async function () {
-      await dsaDepositUSDT(100);
-
-      await expect(
-        dsa.cast(
-          ...encodeSpells([
-            {
-              connector: ubiquityTest,
-              method: "deposit",
-              args: [USDT, onep.mul(100), 4, 0, 0]
-            }
-          ]),
-          uadWhaleAddress
-        )
-      ).to.be.not.reverted;
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
+      expect(await bondingShareLpAmount(dsa.address)).to.be.equal(0);
     });
   });
 });

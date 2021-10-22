@@ -33,8 +33,8 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 1,
       forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`
-        // blockNumber: 13372390
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+        blockNumber: 13400000
       },
       accounts: [
         {

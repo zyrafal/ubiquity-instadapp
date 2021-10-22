@@ -68,38 +68,46 @@ async function deployImpersonateHardhat(
   await deployer.sendTransaction({ to: masterAddress, value: one.mul(100) });
   await instaConnectorsV2.connect(master).addConnectors([ubiquityTest], [connectV2UbiquityAddress]);
 
-  // deployer SEND ETH, UAD, UAD3CRV-f to tester
-  await deployer.sendTransaction({ to: testerAddress, value: one.mul(1000) });
-  await uADContract.connect(deployer).transfer(testerAddress, one.mul(5000));
-  await uAD3CRVfContract.connect(deployer).transfer(testerAddress, one.mul(2000));
+  // console.log("connectV2UbiquityAddress", connectV2UbiquityAddress);
+  // const conn = new ethers.Contract(connectV2UbiquityAddress, [
+  //   "function deposit(address,uint256,uint256,uint256,uint256) external payable returns (string memory , bytes memory)",
+  //   "function withdraw(uint256,address,uint256,uint256) external payable returns (string memory , bytes memory)"
+  // ]);
+  // await conn.connect(deployer).deposit(UAD, 1000000, 4, 0, 0);
+  // await conn.connect(deployer).withdraw(34, UAD, 0, 0);
 
-  // Create DSA for tester
-  const receipt = await (await instaIndex.build(testerAddress, 2, testerAddress)).wait();
-  const event = receipt.events.find((a: any) => a.event === "LogAccountCreated");
-  const dsaAddress: string = event.args.account;
-  const dsa = (await ethers.getContractAt(instaImplementationsM1, dsaAddress)).connect(deployer);
+  // // deployer SEND ETH, UAD, UAD3CRV-f to tester
+  // await deployer.sendTransaction({ to: testerAddress, value: one.mul(1000) });
+  // await uADContract.connect(deployer).transfer(testerAddress, one.mul(5000));
+  // await uAD3CRVfContract.connect(deployer).transfer(testerAddress, one.mul(2000));
 
-  // deployer SEND ETH, UAD, UAD3CRV-f to dsa tester
-  await deployer.sendTransaction({ to: dsaAddress, value: one.mul(1000) });
-  await uADContract.connect(deployer).transfer(dsaAddress, one.mul(5000));
-  await uAD3CRVfContract.connect(deployer).transfer(dsaAddress, one.mul(2000));
+  // // Create DSA for tester
+  // const receipt = await (await instaIndex.build(testerAddress, 2, testerAddress)).wait();
+  // const event = receipt.events.find((a: any) => a.event === "LogAccountCreated");
+  // const dsaAddress: string = event.args.account;
+  // const dsa = (await ethers.getContractAt(instaImplementationsM1, dsaAddress)).connect(deployer);
 
-  // deployer SEND DAI to dsa tester
-  await uAD3CRVfContract
-    .connect(deployer)
-    .remove_liquidity_one_coin(one.mul(200).mul(120).div(100), 1, one.mul(200).mul(110).div(100));
-  await POOL3Contract.connect(deployer).remove_liquidity_one_coin(one.mul(200).mul(110).div(100), 0, one.mul(200));
-  await DAIContract.connect(deployer).transfer(dsa.address, one.mul(200));
+  // // deployer SEND ETH, UAD, UAD3CRV-f to dsa tester
+  // await deployer.sendTransaction({ to: dsaAddress, value: one.mul(1000) });
+  // await uADContract.connect(deployer).transfer(dsaAddress, one.mul(5000));
+  // await uAD3CRVfContract.connect(deployer).transfer(dsaAddress, one.mul(2000));
+
+  // // deployer SEND DAI to dsa tester
+  // await uAD3CRVfContract
+  //   .connect(deployer)
+  //   .remove_liquidity_one_coin(one.mul(200).mul(120).div(100), 1, one.mul(200).mul(110).div(100));
+  // await POOL3Contract.connect(deployer).remove_liquidity_one_coin(one.mul(200).mul(110).div(100), 0, one.mul(200));
+  // await DAIContract.connect(deployer).transfer(dsa.address, one.mul(200));
 
   console.log("deployer         eth", ethers.utils.formatEther(await ethers.provider.getBalance(deployer.address)));
   console.log("deployer         uad", ethers.utils.formatEther(await uADContract.balanceOf(deployer.address)));
-  console.log("deployer   uad3CRV-f", ethers.utils.formatEther(await ethers.provider.getBalance(deployer.address)));
-  console.log("tester           eth", ethers.utils.formatEther(await ethers.provider.getBalance(testerAddress)));
-  console.log("tester           uad", ethers.utils.formatEther(await uADContract.balanceOf(testerAddress)));
-  console.log("tester     uad3CRV-f", ethers.utils.formatEther(await uAD3CRVfContract.balanceOf(testerAddress)));
-  console.log("tester dsa       eth", ethers.utils.formatEther(await ethers.provider.getBalance(dsaAddress)));
-  console.log("tester dsa       uad", ethers.utils.formatEther(await uADContract.balanceOf(dsaAddress)));
-  console.log("tester dsa uad3CRV-f", ethers.utils.formatEther(await uAD3CRVfContract.balanceOf(dsaAddress)));
+  console.log("deployer   uad3CRV-f", ethers.utils.formatEther(await uAD3CRVfContract.balanceOf(deployer.address)));
+  // console.log("tester           eth", ethers.utils.formatEther(await ethers.provider.getBalance(testerAddress)));
+  // console.log("tester           uad", ethers.utils.formatEther(await uADContract.balanceOf(testerAddress)));
+  // console.log("tester     uad3CRV-f", ethers.utils.formatEther(await uAD3CRVfContract.balanceOf(testerAddress)));
+  // console.log("tester dsa       eth", ethers.utils.formatEther(await ethers.provider.getBalance(dsaAddress)));
+  // console.log("tester dsa       uad", ethers.utils.formatEther(await uADContract.balanceOf(dsaAddress)));
+  // console.log("tester dsa uad3CRV-f", ethers.utils.formatEther(await uAD3CRVfContract.balanceOf(dsaAddress)));
 }
 
 export default deployImpersonateHardhat;

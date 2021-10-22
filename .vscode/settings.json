@@ -4,13 +4,10 @@
     ".env",
     ".vscode/settings.json",
     "backend/contracts/connector",
-    "backend/contracts/resolver",
     "backend/hardhat.config.js",
     "backend/package.json",
     "backend/deploy/InstaUbiquityResolver.ts",
-    "backend/tests/resolver.test.ts",
     "backend/deployments/mainnet/Implementation_m1.sol/InstaImplementationM1.json",
-    "backend/tests/resolver.test.ts",
     "frontend/composables/protocols",
     "frontend/components/sidebar/context/ubiquity/SidebarUbiquitySupply.vue",
     "frontend/composables/protocols/useUbiquityPosition.ts",
@@ -20,18 +17,16 @@
     "frontend/core/strategies",
     "frontend/package.json",
     "backend/hardhat.config.ts",
-    "backend/tests/connector.test.ts"
+    "backend/tests/connector.test.ts",
+    "backend/tests/connector.withdraw.test.ts",
+    "backend/scripts/deployImpersonateHardhat.ts",
+    "backend/contracts/connectors/ubiquity/main.sol"
   ],
-  "solidity.defaultCompiler": "remote",
   "solidity.compileUsingRemoteVersion": "v0.7.6+commit.7338295f",
   "workbench.colorTheme": "Zacks (rainglow)",
-  "code-runner.executorMap": {
-    "typescript": "npx ts-node"
-  },
   "svgPreview.style": {
     "html": {
       "background": "white"
     }
-  },
-  "favorites.sortOrder": "ASC"
+  }
 }

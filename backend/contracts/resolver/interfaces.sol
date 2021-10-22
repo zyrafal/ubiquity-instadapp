@@ -33,7 +33,7 @@ interface IUbiquityAlgorithmicDollarManager {
     function masterChefAddress() external view returns (address);
 }
 
-interface IBondingShareV2 {
+interface IUbiquityBondingV2 {
     struct Bond {
         address minter;
         uint256 lpFirstDeposited;
