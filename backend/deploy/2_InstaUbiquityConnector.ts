@@ -1,5 +1,5 @@
 import deployImpersonateHardhat from "../scripts/deployImpersonateHardhat";
-import deployImpersonateTenderly from "../scripts/deployImpersonateTenderly";
+// import deployImpersonateTenderly from "../scripts/deployImpersonateTenderly";
 
 import type { DeployFunction } from "hardhat-deploy/types";
 
@@ -24,6 +24,6 @@ const deployInstaUbiquityConnectorFunction: DeployFunction = async function (hre
     // addresses.connectors[ubiquityTest] = connector.address;
   }
 };
-deployInstaUbiquityConnectorFunction.tags = ["InstaUbiquityConnector"];
+deployInstaUbiquityConnectorFunction.tags = ["ConnectV2Ubiquity"];
 
 export default deployInstaUbiquityConnectorFunction;
