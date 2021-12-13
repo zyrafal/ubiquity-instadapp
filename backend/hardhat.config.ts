@@ -34,7 +34,8 @@ const config: HardhatUserConfig = {
       chainId: 1,
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-        blockNumber: 13400000
+        blockNumber: 13601000 // connector block deploy = 13600952 
+        // blockNumber: 13400000 // old block, old instaIndex, not using deployed connector 
       },
       accounts: [
         {
