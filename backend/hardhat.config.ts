@@ -64,10 +64,11 @@ const config: HardhatUserConfig = {
       url: `https://ropsten.infura.io/v3/${process.env.INFURA_ID}`,
       accounts
     },
-    local: {
+    localhost: {
       chainId: 1,
+      saveDeployments: false,
       url: "http://127.0.0.1:8545",
-      accounts
+      accounts,
     },
     tenderly: {
       chainId: 1,

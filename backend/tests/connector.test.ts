@@ -13,9 +13,6 @@ import instaImplementationsM1 from "../scripts/constant/abi/core/InstaImplementa
 
 describe("Ubiquity connector", function () {
   const ubiquityTest = "Ubiquity-v1";
-  const url = `https://rpc.tenderly.co/fork/${process.env.TENDERLY_FORK_PATH}`;
-
-  const CONNECTOR = "0x8EC066D75d665616A94F2EccDBE49b54eAeefc78";
 
   const BOND = "0x2dA07859613C14F6f05c97eFE37B9B4F212b5eF5";
   const UAD = "0x0F644658510c95CB46955e55D7BA9DDa9E9fBEc6";
@@ -101,10 +98,10 @@ describe("Ubiquity connector", function () {
     const dsaAddress: string = event.args.account;
     dsa = (await ethers.getContractAt(instaImplementationsM1, dsaAddress)).connect(deployer);
 
-    // if (network == "hardhat")
-    // {
-    //   await deployer.sendTransaction({ to: dsaAddress, value: one.mul(100) });
-    // } else if (network =="tenderly"{
+    if (network == "hardhat") {
+      await deployer.sendTransaction({ to: dsaAddress, value: one.mul(100) });
+    }
+    // else if (network =="tenderly"{
     //   const url = `https://rpc.tenderly.co/fork/${process.env.TENDERLY_FORK_PATH}`;
     //   await sendTxEth( url , deployer.address, dsaAddress, one.mul(100));
     // }
@@ -128,7 +125,7 @@ describe("Ubiquity connector", function () {
   const dsaDepositUAD3CRVf = async (amount: number) => {
     await uADContract.connect(deployer).approve(uAD3CRVfContract.address, one.mul(amount).mul(2));
     await uAD3CRVfContract.connect(deployer).add_liquidity([one.mul(amount).mul(2), 0], 0);
-    // await uAD3CRVfContract.connect(deployer).transfer(dsa.address, one.mul(amount));
+    await uAD3CRVfContract.connect(deployer).transfer(dsa.address, one.mul(amount));
   };
 
   const dsaDepositUAD = async (amount: number) => {
@@ -196,7 +193,7 @@ describe("Ubiquity connector", function () {
     });
     it("Should deposit uAD3CRVf into DSA wallet", async function () {
       await dsaDepositUAD3CRVf(100);
-      // expect(await uAD3CRVfContract.balanceOf(dsa.address)).to.be.gte(one.mul(100));
+      expect(await uAD3CRVfContract.balanceOf(dsa.address)).to.be.gte(one.mul(100));
     });
     it("Should deposit uAD into DSA wallet", async function () {
       await dsaDepositUAD(100);
