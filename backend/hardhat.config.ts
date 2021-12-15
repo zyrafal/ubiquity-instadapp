@@ -34,8 +34,8 @@ const config: HardhatUserConfig = {
       chainId: 1,
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
-        blockNumber: 13601000 // connector block deploy = 13600952 
-        // blockNumber: 13400000 // old block, old instaIndex, not using deployed connector 
+        // blockNumber: 13601000 // connector block deploy = 13600952 
+        blockNumber: 13400000 // old block, old instaIndex, not using deployed connector 
       },
       accounts: [
         {
@@ -80,10 +80,13 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
+        version: "0.8.4"
+      },
+      {
         version: "0.7.6"
       },
       {
-        version: "0.8.4"
+        version: "0.6.12"
       }
     ],
     settings: {
