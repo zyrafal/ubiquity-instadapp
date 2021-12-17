@@ -1,4 +1,4 @@
-import deployImpersonateHardhat from "../scripts/deployImpersonateHardhat";
+import deployImpersonateHardhat from "./deployImpersonateHardhat";
 // import deployImpersonateTenderly from "../scripts/deployImpersonateTenderly";
 
 import type { DeployFunction } from "hardhat-deploy/types";
