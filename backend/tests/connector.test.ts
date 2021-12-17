@@ -1,18 +1,25 @@
-import type { SignerWithAddress } from "hardhat-deploy-ethers/dist/src/signers";
 import { expect } from "chai";
-import { BigNumber, Contract, utils } from "ethers";
 import hre from "hardhat";
-const { ethers, waffle, network } = hre;
-const { provider } = ethers;
+const { waffle, ethers } = hre;
+const { provider } = waffle;
+const { BigNumber, utils } = ethers;
 
-import encodeSpells from "../scripts/encodeSpells";
-import addresses from "../scripts/constant/addresses";
-import abis from "../scripts/constant/abis";
+import { deployAndEnableConnector } from "../scripts/tests/deployAndEnableConnector";
+import { buildDSAv2 } from "../scripts/tests/buildDSAv2";
+import { encodeSpells } from "../scripts/tests/encodeSpells";
+import { addresses } from "../scripts/tests/mainnet/addresses";
+import { abis } from "../scripts/constant/abis";
+import { forkReset, sendEth, mineNBlock } from "./utils";
+import { impersonateAccounts } from "../scripts/tests/impersonate";
+import type { Signer, Contract, BigNumberish } from "ethers";
+import { ConnectV2Ubiquity__factory } from "../artifacts/types";
 
-import { buildDSAv2 } from "./buildDSAv2";
+import { abi as implementationsABI } from "../scripts/constant/abi/core/InstaImplementations.json";
+const implementationsMappingAddr = "0xCBA828153d3a85b30B5b912e1f2daCac5816aE9D";
 
-describe("Ubiquity connector", function () {
-  const ubiquityTest = "Ubiquity-v1";
+describe("Ubiquity", function () {
+  const ubiquityTest = "UBIQUITY-TEST-A";
+  const ubiquityProd = "UBIQUITY-A";
 
   const BOND = "0x2dA07859613C14F6f05c97eFE37B9B4F212b5eF5";
   const UAD = "0x0F644658510c95CB46955e55D7BA9DDa9E9fBEc6";
@@ -23,6 +30,8 @@ describe("Ubiquity connector", function () {
   const POOL3 = "0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7";
   const UAD3CRVF = "0x20955CB69Ae1515962177D164dfC9522feef567E";
 
+  const ethWhaleAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+  const uadWhaleAddress = "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd";
   const one = BigNumber.from(10).pow(18);
   const onep = BigNumber.from(10).pow(6);
   const ABI = [
@@ -30,14 +39,11 @@ describe("Ubiquity connector", function () {
     "function allowance(address owner, address spender) external view returns (uint256)",
     "function transfer(address to, uint amount) returns (boolean)",
     "function remove_liquidity_one_coin(uint256 _burn_amount, int128 i, uint256 _min_received) external returns (uint256)",
+    "function add_liquidity(uint256[3],uint256) returns (uint256)",
     "function approve(address, uint256) external",
     "function holderTokens(address) view returns (uint256[])",
     "function getBond(uint256) view returns (tuple(address,uint256,uint256,uint256,uint256,uint256))"
   ];
-
-  const ABI2 = ["function add_liquidity(uint256[2],uint256) returns (uint256)"];
-  const ABI3 = ["function add_liquidity(uint256[3],uint256)"];
-
   let dsa: Contract;
   let POOL3Contract: Contract;
   let CRV3Contract: Contract;
@@ -48,66 +54,83 @@ describe("Ubiquity connector", function () {
   let USDTContract: Contract;
   let BONDContract: Contract;
   let instaIndex: Contract;
+  let instaConnectorsV2: Contract;
+  let instaImplementationsMapping;
+  let InstaAccountV2DefaultImpl;
 
+  let uadWhale;
 
+  const bondingShare = async function (address: any) {
+    let lpAmount = BigNumber.from(0);
+    let lpAmountTotal = BigNumber.from(0);
+    let bondId = -1;
 
-  const bondingShareLpAmount = async function (address: string) {
-    let LP = 0;
     const bondIds = await BONDContract.holderTokens(address);
-    if (bondIds.length) {
-      const bond = await BONDContract.getBond(bondIds[0]);
-      LP = bond[5];
-    }
-    // console.log("LP", ethers.utils.formatEther(LP.toString()));
-    return LP;
-  };
-  let networkName: string;
-  let chainId: number | undefined;
-  let live: boolean;
+    const bondN = bondIds?.length || 0;
 
-  let deployer: SignerWithAddress;
-  let ethWhale: SignerWithAddress;
-  let uadWhale: SignerWithAddress;
+    if (bondN) {
+      for await (bondId of bondIds) {
+        lpAmountTotal = lpAmountTotal.add((await BONDContract.getBond(bondId))[5]);
+      }
+      bondId = Number(bondIds[bondN - 1]);
+      lpAmount = (await BONDContract.getBond(bondId))[5];
+    }
+    return { bondId, bondN, lpAmount, lpAmountTotal };
+  };
+
+  const depositAndGetOneBond = async function () {
+    await dsaDepositUAD3CRVf(100);
+    dsa.cast(
+      ...encodeSpells([
+        {
+          connector: ubiquityTest,
+          method: "deposit",
+          args: [UAD3CRVF, one.mul(100), 1, 0, 0]
+        }
+      ]),
+      uadWhaleAddress
+    );
+  };
 
   before(async () => {
-    ({ deployer, ethWhale, uadWhale } = await ethers.getNamedSigners());
-    networkName = network.name;
-    chainId = network.config.chainId;
-    live = network.live;
-    console.log("network", networkName, chainId, live);
+    console.log("block", await ethers.provider.getBlockNumber());
 
-    POOL3Contract = new ethers.Contract(POOL3, ABI.concat(ABI3), provider);
-    CRV3Contract = new ethers.Contract(CRV3, ABI, provider);
-    uAD3CRVfContract = new ethers.Contract(UAD3CRVF, ABI.concat(ABI2), provider);
-    uADContract = new ethers.Contract(UAD, ABI, provider);
-    DAIContract = new ethers.Contract(DAI, ABI, provider);
-    USDCContract = new ethers.Contract(USDC, ABI, provider);
-    USDTContract = new ethers.Contract(USDT, ABI, provider);
-    BONDContract = new ethers.Contract(BOND, ABI, provider);
+    [uadWhale] = await impersonateAccounts([uadWhaleAddress]);
+    const [ethWhale] = await impersonateAccounts([ethWhaleAddress]);
 
-    dsa = (await buildDSAv2(uadWhale.address)).connect(uadWhale);
+    await sendEth(ethWhale, uadWhaleAddress, 100);
+    POOL3Contract = new ethers.Contract(POOL3, ABI, uadWhale);
+    CRV3Contract = new ethers.Contract(CRV3, ABI, uadWhale);
+    uAD3CRVfContract = new ethers.Contract(UAD3CRVF, ABI, uadWhale);
+    uADContract = new ethers.Contract(UAD, ABI, uadWhale);
+    DAIContract = new ethers.Contract(DAI, ABI, uadWhale);
+    USDCContract = new ethers.Contract(USDC, ABI, uadWhale);
+    USDTContract = new ethers.Contract(USDT, ABI, uadWhale);
+    BONDContract = new ethers.Contract(BOND, ABI, uadWhale);
+    dsa = (await buildDSAv2(uadWhaleAddress)).connect(uadWhale);
+    await sendEth(ethWhale, dsa.address, 100);
 
-    instaIndex = new ethers.Contract(addresses.core.instaIndex, abis.core.instaIndex, provider);
+    instaIndex = new ethers.Contract(addresses.core.instaIndex, abis.core.instaIndex, ethWhale);
 
     const masterAddress = await instaIndex.master();
     const [master] = await impersonateAccounts([masterAddress]);
     await sendEth(ethWhale, masterAddress, 100);
 
+    instaConnectorsV2 = new ethers.Contract(addresses.core.connectorsV2, abis.core.connectorsV2);
 
-    if (networkName == "hardhat") {
-      await deployer.sendTransaction({ to: dsaAddress, value: one.mul(100) });
-    }
-    // else if (networkName =="tenderly"{
-    //   const url = `https://rpc.tenderly.co/fork/${process.env.TENDERLY_FORK_PATH}`;
-    //   await sendTxEth( url , deployer.address, dsaAddress, one.mul(100));
-    // }
-
-    await depositUAD3CRVf(uadWhale.address, 5000);
+    instaImplementationsMapping = await ethers.getContractAt(implementationsABI, implementationsMappingAddr);
+    InstaAccountV2DefaultImpl = await ethers.getContractFactory("InstaDefaultImplementation");
+    InstaAccountV2DefaultImpl = await InstaAccountV2DefaultImpl.deploy(addresses.core.instaIndex);
+    await InstaAccountV2DefaultImpl.deployed();
+    await (
+      await instaImplementationsMapping.connect(master).setDefaultImplementation(InstaAccountV2DefaultImpl.address)
+    ).wait();
   });
 
-  afterEach(async () => {
-    console.log("uadWhale       uad", utils.formatEther(await uADContract.balanceOf(uadWhale.address)));
-    console.log("uadWhale uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(uadWhale.address)));
+  const logAll = async function () {
+    console.log("deployer       eth", utils.formatEther(await ethers.provider.getBalance(uadWhaleAddress)));
+    console.log("deployer       uad", utils.formatEther(await uADContract.balanceOf(uadWhaleAddress)));
+    console.log("deployer uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(uadWhaleAddress)));
     console.log("dsa            eth", utils.formatEther(await ethers.provider.getBalance(dsa.address)));
     console.log("dsa            dai", utils.formatEther(await DAIContract.balanceOf(dsa.address)));
     console.log("dsa           usdc", utils.formatUnits(await USDCContract.balanceOf(dsa.address), 6));
@@ -115,67 +138,55 @@ describe("Ubiquity connector", function () {
     console.log("dsa            uad", utils.formatEther(await uADContract.balanceOf(dsa.address)));
     console.log("dsa           3CRV", utils.formatEther(await CRV3Contract.balanceOf(dsa.address)));
     console.log("dsa      uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(dsa.address)));
-    console.log("dsa        n bonds", (await BONDContract.holderTokens(dsa.address)).length);
-    console.log("dsa       lp bonds", utils.formatEther(await bondingShareLpAmount(dsa.address)));
-  });
-
-  const depositUAD = async (account: string, amount: number) => {
-    await uADContract.connect(uadWhale).transfer(account, one.mul(amount));
+    const { bondId, bondN, lpAmount, lpAmountTotal } = await bondingShare(dsa.address);
+    console.log("dsa        n bonds", utils.formatEther(lpAmountTotal), bondN);
+    console.log("dsa      last bond", utils.formatEther(lpAmount), bondId);
   };
-  const dsaDepositUAD = async (amount: number) => depositUAD(dsa.address, amount);
 
-  const depositUAD3CRVf = async (account: string, amount: number) => {
-    await uADContract.connect(uadWhale).approve(uAD3CRVfContract.address, one.mul(amount).mul(2));
-    await uAD3CRVfContract.connect(uadWhale).add_liquidity([one.mul(amount).mul(2), 0], 0);
-    await uAD3CRVfContract.connect(uadWhale).transfer(account, one.mul(amount));
-  };
-  const dsaDepositUAD3CRVf = async (amount: number) => depositUAD3CRVf(dsa.address, amount);
+  afterEach(logAll);
 
-  const depositCRV3 = async (account: string, amount: number) => {
-    await uAD3CRVfContract
-      .connect(uadWhale)
-      .remove_liquidity_one_coin(one.mul(amount).mul(110).div(100), 1, one.mul(amount));
-    await CRV3Contract.connect(uadWhale).transfer(account, one.mul(amount));
+  const dsaDepositUAD3CRVf = async (amount: BigNumberish) => {
+    await uAD3CRVfContract.transfer(dsa.address, one.mul(amount));
   };
-  const dsaDepositCRV3 = async (amount: number) => depositCRV3(dsa.address, amount);
 
-  const dsaDepositDAI = async (amount: number) => {
-    await uAD3CRVfContract
-      .connect(uadWhale)
-      .remove_liquidity_one_coin(one.mul(amount).mul(120).div(100), 1, one.mul(amount).mul(110).div(100));
-    await POOL3Contract.connect(uadWhale).remove_liquidity_one_coin(
-      one.mul(amount).mul(110).div(100),
-      0,
-      one.mul(amount)
-    );
-    await DAIContract.connect(uadWhale).transfer(dsa.address, one.mul(amount));
+  const dsaDepositUAD = async (amount: BigNumberish) => {
+    await uAD3CRVfContract.remove_liquidity_one_coin(one.mul(amount).mul(110).div(100), 0, one.mul(amount));
+    await uADContract.transfer(dsa.address, one.mul(amount));
   };
-  const dsaDepositUSDC = async (amount: number) => {
-    await uAD3CRVfContract
-      .connect(uadWhale)
-      .remove_liquidity_one_coin(one.mul(amount).mul(120).div(100), 1, one.mul(amount).mul(110).div(100));
-    await POOL3Contract.connect(uadWhale).remove_liquidity_one_coin(
-      one.mul(amount).mul(110).div(100),
+
+  const dsaDepositCRV3 = async (amount: BigNumberish) => {
+    await uAD3CRVfContract.remove_liquidity_one_coin(one.mul(amount).mul(110).div(100), 1, one.mul(amount));
+    await CRV3Contract.transfer(dsa.address, one.mul(amount));
+  };
+
+  const dsaDepositDAI = async (amount: BigNumberish) => {
+    await uAD3CRVfContract.remove_liquidity_one_coin(
+      one.mul(amount).mul(120).div(100),
       1,
-      onep.mul(amount)
+      one.mul(amount).mul(110).div(100)
     );
-    await USDCContract.connect(uadWhale).transfer(dsa.address, onep.mul(amount));
+    await POOL3Contract.remove_liquidity_one_coin(one.mul(amount).mul(110).div(100), 0, one.mul(amount));
+    await DAIContract.transfer(dsa.address, one.mul(amount));
   };
-  const dsaDepositUSDT = async (amount: number) => {
-    await uAD3CRVfContract
-      .connect(uadWhale)
-      .remove_liquidity_one_coin(one.mul(amount).mul(120).div(100), 1, one.mul(amount).mul(110).div(100));
-    await POOL3Contract.connect(uadWhale).remove_liquidity_one_coin(
-      one.mul(amount).mul(110).div(100),
-      2,
-      onep.mul(amount)
+  const dsaDepositUSDC = async (amount: BigNumberish) => {
+    await uAD3CRVfContract.remove_liquidity_one_coin(
+      one.mul(amount).mul(120).div(100),
+      1,
+      one.mul(amount).mul(110).div(100)
     );
-    await USDTContract.connect(uadWhale).transfer(dsa.address, onep.mul(amount));
+    await POOL3Contract.remove_liquidity_one_coin(one.mul(amount).mul(110).div(100), 1, onep.mul(amount));
+    await USDCContract.transfer(dsa.address, onep.mul(amount));
   };
-
+  const dsaDepositUSDT = async (amount: BigNumberish) => {
+    await uAD3CRVfContract.remove_liquidity_one_coin(
+      one.mul(amount).mul(120).div(100),
+      1,
+      one.mul(amount).mul(110).div(100)
+    );
+    await POOL3Contract.remove_liquidity_one_coin(one.mul(amount).mul(110).div(100), 2, onep.mul(amount));
+    await USDTContract.transfer(dsa.address, onep.mul(amount));
+  };
   describe("DSA wallet setup", function () {
-    it("Should be OK", async function () { });
-
     it("Should have contracts deployed.", async function () {
       expect(POOL3Contract.address).to.be.properAddress;
       expect(CRV3Contract.address).to.be.properAddress;
@@ -185,11 +196,15 @@ describe("Ubiquity connector", function () {
       expect(USDCContract.address).to.be.properAddress;
       expect(USDTContract.address).to.be.properAddress;
       expect(BONDContract.address).to.be.properAddress;
-      expect(instaIndex.address).to.be.properAddress;
       expect(dsa.address).to.be.properAddress;
+
+      expect(instaIndex.address).to.be.properAddress;
+      expect(instaConnectorsV2.address).to.be.properAddress;
+      console.log("instaIndex.address", instaIndex.address);
+      console.log("instaConnectorsV2.address", instaConnectorsV2.address);
     });
     it("Should deposit uAD3CRVf into DSA wallet", async function () {
-      await dsaDepositUAD3CRVf(100);
+      await expect(dsaDepositUAD3CRVf(1)).to.be.revertedWith("ko");
       expect(await uAD3CRVfContract.balanceOf(dsa.address)).to.be.gte(one.mul(100));
     });
     it("Should deposit uAD into DSA wallet", async function () {
@@ -214,24 +229,24 @@ describe("Ubiquity connector", function () {
     });
   });
 
-  describe("Main", function () {
+  describe("Deposit", function () {
     it("should deposit uAD3CRVf to get Ubiquity Bonding Shares", async function () {
+      await logAll();
       await dsaDepositUAD3CRVf(100);
-      console.log("dsa      uad3CRV-f", utils.formatEther(await uAD3CRVfContract.balanceOf(dsa.address)));
-
+      expect((await bondingShare(dsa.address)).lpAmount).to.be.equal(0);
       await expect(
         dsa.cast(
           ...encodeSpells([
             {
               connector: ubiquityTest,
               method: "deposit",
-              args: [UAD3CRVF, one, 1, 0, 0]
+              args: [UAD3CRVF, one.mul(100), 1, 0, 0]
             }
           ]),
-          uadWhale.address
+          uadWhaleAddress
         )
-      ).to.be.revertedWith("no");
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
+      ).to.be.not.reverted;
+      expect((await bondingShare(dsa.address)).lpAmount).to.be.gt(0);
     });
 
     it("should deposit uAD to get Ubiquity Bonding Shares", async function () {
@@ -242,13 +257,13 @@ describe("Ubiquity connector", function () {
             {
               connector: ubiquityTest,
               method: "deposit",
-              args: [UAD, one, 4, 0, 0]
+              args: [UAD, one.mul(100), 1, 0, 0]
             }
           ]),
-          uadWhale.address
+          uadWhaleAddress
         )
       ).to.be.not.reverted;
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
+      expect((await bondingShare(dsa.address)).lpAmount).to.be.gt(0);
     });
 
     it("should deposit 3CRV to get Ubiquity Bonding Shares", async function () {
@@ -259,13 +274,13 @@ describe("Ubiquity connector", function () {
             {
               connector: ubiquityTest,
               method: "deposit",
-              args: [CRV3, one, 4, 0, 0]
+              args: [CRV3, one.mul(100), 1, 0, 0]
             }
           ]),
-          uadWhale.address
+          uadWhaleAddress
         )
       ).to.be.not.reverted;
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
+      expect((await bondingShare(dsa.address)).lpAmount).to.be.gt(0);
     });
 
     it("should deposit DAI to get Ubiquity Bonding Shares", async function () {
@@ -276,18 +291,17 @@ describe("Ubiquity connector", function () {
             {
               connector: ubiquityTest,
               method: "deposit",
-              args: [DAI, one.mul(100), 4, 0, 0]
+              args: [DAI, one.mul(100), 1, 0, 0]
             }
           ]),
-          uadWhale.address
+          uadWhaleAddress
         )
       ).to.be.not.reverted;
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
+      expect((await bondingShare(dsa.address)).lpAmount).to.be.gt(0);
     });
 
     it("should deposit USDC to get Ubiquity Bonding Shares", async function () {
       await dsaDepositUSDC(100);
-
       await expect(
         dsa.cast(
           ...encodeSpells([
@@ -297,15 +311,14 @@ describe("Ubiquity connector", function () {
               args: [USDC, onep.mul(100), 4, 0, 0]
             }
           ]),
-          uadWhale.address
+          uadWhaleAddress
         )
       ).to.be.not.reverted;
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
+      expect((await bondingShare(dsa.address)).lpAmount).to.be.gt(0);
     });
 
     it("should deposit USDT to get Ubiquity Bonding Shares", async function () {
       await dsaDepositUSDT(100);
-
       await expect(
         dsa.cast(
           ...encodeSpells([
@@ -315,10 +328,122 @@ describe("Ubiquity connector", function () {
               args: [USDT, onep.mul(100), 4, 0, 0]
             }
           ]),
-          uadWhale.address
+          uadWhaleAddress
         )
       ).to.be.not.reverted;
-      expect(await bondingShareLpAmount(dsa.address)).to.be.gt(0);
+      expect((await bondingShare(dsa.address)).lpAmount).to.be.gt(0);
+    });
+  });
+
+  describe("Withdraw", function () {
+    let bondId = -1;
+
+    before(async () => {
+      await depositAndGetOneBond();
+      await depositAndGetOneBond();
+      await depositAndGetOneBond();
+      await depositAndGetOneBond();
+      await depositAndGetOneBond();
+      await depositAndGetOneBond();
+      ({ bondId } = await bondingShare(dsa.address));
+
+      console.log("Mining 50 000 blocks for more than one week, please wait...");
+
+      console.log("block", await ethers.provider.getBlockNumber());
+      await mineNBlock(50000, 1);
+      console.log("block", await ethers.provider.getBlockNumber());
+    });
+
+    it("Should withdraw DAI", async function () {
+      console.log("bondId", bondId);
+      await expect(
+        dsa.cast(
+          ...encodeSpells([
+            {
+              connector: ubiquityTest,
+              method: "withdraw",
+              args: [bondId, DAI, 0, 0]
+            }
+          ]),
+          uadWhaleAddress
+        )
+      ).to.be.not.reverted;
+    });
+
+
+    it("Should withdraw USDC", async function () {
+      await expect(
+        dsa.cast(
+          ...encodeSpells([
+            {
+              connector: ubiquityTest,
+              method: "withdraw",
+              args: [bondId - 1, USDC, 0, 0]
+            }
+          ]),
+          uadWhaleAddress
+        )
+      ).to.be.not.reverted;
+    });
+
+    it("Should withdraw USDT", async function () {
+      await expect(
+        dsa.cast(
+          ...encodeSpells([
+            {
+              connector: ubiquityTest,
+              method: "withdraw",
+              args: [bondId - 2, USDT, 0, 0]
+            }
+          ]),
+          uadWhaleAddress
+        )
+      ).to.be.not.reverted;
+    });
+
+    it("Should withdraw UAD", async function () {
+      await expect(
+        dsa.cast(
+          ...encodeSpells([
+            {
+              connector: ubiquityTest,
+              method: "withdraw",
+              args: [bondId - 3, UAD, 0, 0]
+            }
+          ]),
+          uadWhaleAddress
+        )
+      ).to.be.not.reverted;
+    });
+
+    it("Should withdraw CRV3", async function () {
+      await expect(
+        dsa.cast(
+          ...encodeSpells([
+            {
+              connector: ubiquityTest,
+              method: "withdraw",
+              args: [bondId - 4, CRV3, 0, 0]
+            }
+          ]),
+          uadWhaleAddress
+        )
+      ).to.be.not.reverted;
+    });
+
+    it("Should withdraw UAD3CRVF", async function () {
+      await expect(
+        dsa.cast(
+          ...encodeSpells([
+            {
+              connector: ubiquityTest,
+              method: "withdraw",
+              args: [bondId - 5, UAD3CRVF, 0, 0]
+            }
+          ]),
+          uadWhaleAddress
+        )
+      ).to.be.not.reverted;
     });
   });
 });

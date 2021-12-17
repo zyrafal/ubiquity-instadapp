@@ -30,9 +30,12 @@ export async function sendEth(from: any, to: any, amount: any) {
   });
 }
 
-export async function mineNBlock(blockCount: any, secondsBetweenBlock: any) {
+export async function mineNBlock(
+  blockCount: number,
+  secondsBetweenBlock?: number
+): Promise<void> {
   const blockBefore = await ethers.provider.getBlock("latest");
-  const maxMinedBlockPerBatch = 1000;
+  const maxMinedBlockPerBatch = 5000;
   let blockToMine = blockCount;
   let blockTime = blockBefore.timestamp;
   while (blockToMine > maxMinedBlockPerBatch) {
