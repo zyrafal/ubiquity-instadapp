@@ -8,6 +8,7 @@ export const abis: Record<string, any> = {
     basic: require("./abi/connectors/basic.json"),
     auth: require("./abi/connectors/auth.json"),
     "INSTAPOOL-A": require("./abi/connectors/instapool.json"),
+    "UBIQUITY-A": require("./abi/connectors/ubiquity.json"),
   },
   basic: {
     erc20: require("./abi/basics/erc20.json"),

@@ -9,17 +9,18 @@ import { buildDSAv2 } from "../scripts/tests/buildDSAv2";
 import { encodeSpells } from "../scripts/tests/encodeSpells";
 import { addresses } from "../scripts/tests/mainnet/addresses";
 import { abis } from "../scripts/constant/abis";
-import { forkReset, sendEth, mineNBlock } from "./utils";
 import { impersonateAccounts } from "../scripts/tests/impersonate";
 import type { Signer, Contract, BigNumberish } from "ethers";
-import { ConnectV2Ubiquity__factory } from "../artifacts/types";
+import { forkReset, sendEth, mineNBlock } from "./utils";
 
 import { abi as implementationsABI } from "../scripts/constant/abi/core/InstaImplementations.json";
 const implementationsMappingAddr = "0xCBA828153d3a85b30B5b912e1f2daCac5816aE9D";
 
+import ConnectV2UbiquityAbi from "../scripts/constant/abi/connectors/ubiquity.json";
+const UbiquityConnector = "UBIQUITY-A";
+
+
 describe("Ubiquity", function () {
-  const ubiquityTest = "UBIQUITY-TEST-A";
-  const ubiquityProd = "UBIQUITY-A";
 
   const BOND = "0x2dA07859613C14F6f05c97eFE37B9B4F212b5eF5";
   const UAD = "0x0F644658510c95CB46955e55D7BA9DDa9E9fBEc6";
@@ -32,6 +33,8 @@ describe("Ubiquity", function () {
 
   const ethWhaleAddress = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
   const uadWhaleAddress = "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd";
+
+  const blockFork = 13097100;
   const one = BigNumber.from(10).pow(18);
   const onep = BigNumber.from(10).pow(6);
   const ABI = [
@@ -39,11 +42,12 @@ describe("Ubiquity", function () {
     "function allowance(address owner, address spender) external view returns (uint256)",
     "function transfer(address to, uint amount) returns (boolean)",
     "function remove_liquidity_one_coin(uint256 _burn_amount, int128 i, uint256 _min_received) external returns (uint256)",
-    "function add_liquidity(uint256[3],uint256) returns (uint256)",
+    "function add_liquidity(uint256[2],uint256) returns (uint256)",
     "function approve(address, uint256) external",
     "function holderTokens(address) view returns (uint256[])",
     "function getBond(uint256) view returns (tuple(address,uint256,uint256,uint256,uint256,uint256))"
   ];
+
   let dsa: Contract;
   let POOL3Contract: Contract;
   let CRV3Contract: Contract;
@@ -53,10 +57,6 @@ describe("Ubiquity", function () {
   let USDCContract: Contract;
   let USDTContract: Contract;
   let BONDContract: Contract;
-  let instaIndex: Contract;
-  let instaConnectorsV2: Contract;
-  let instaImplementationsMapping;
-  let InstaAccountV2DefaultImpl;
 
   let uadWhale;
 
@@ -83,7 +83,7 @@ describe("Ubiquity", function () {
     dsa.cast(
       ...encodeSpells([
         {
-          connector: ubiquityTest,
+          connector: UbiquityConnector,
           method: "deposit",
           args: [UAD3CRVF, one.mul(100), 1, 0, 0]
         }
@@ -93,6 +93,18 @@ describe("Ubiquity", function () {
   };
 
   before(async () => {
+    await hre.network.provider.request({
+      method: "hardhat_reset",
+      params: [
+        {
+          forking: {
+            // @ts-ignore
+            jsonRpcUrl: hre.config.networks.hardhat.forking.url,
+            blockNumber: 13800000,
+          },
+        },
+      ],
+    });
     console.log("block", await ethers.provider.getBlockNumber());
 
     [uadWhale] = await impersonateAccounts([uadWhaleAddress]);
@@ -110,21 +122,7 @@ describe("Ubiquity", function () {
     dsa = (await buildDSAv2(uadWhaleAddress)).connect(uadWhale);
     await sendEth(ethWhale, dsa.address, 100);
 
-    instaIndex = new ethers.Contract(addresses.core.instaIndex, abis.core.instaIndex, ethWhale);
-
-    const masterAddress = await instaIndex.master();
-    const [master] = await impersonateAccounts([masterAddress]);
-    await sendEth(ethWhale, masterAddress, 100);
-
-    instaConnectorsV2 = new ethers.Contract(addresses.core.connectorsV2, abis.core.connectorsV2);
-
-    instaImplementationsMapping = await ethers.getContractAt(implementationsABI, implementationsMappingAddr);
-    InstaAccountV2DefaultImpl = await ethers.getContractFactory("InstaDefaultImplementation");
-    InstaAccountV2DefaultImpl = await InstaAccountV2DefaultImpl.deploy(addresses.core.instaIndex);
-    await InstaAccountV2DefaultImpl.deployed();
-    await (
-      await instaImplementationsMapping.connect(master).setDefaultImplementation(InstaAccountV2DefaultImpl.address)
-    ).wait();
+    await (await uAD3CRVfContract.add_liquidity([one.mul(50000), 0], 0)).wait();
   });
 
   const logAll = async function () {
@@ -145,9 +143,10 @@ describe("Ubiquity", function () {
 
   afterEach(logAll);
 
-  const dsaDepositUAD3CRVf = async (amount: BigNumberish) => {
-    await uAD3CRVfContract.transfer(dsa.address, one.mul(amount));
+  const depositUAD3CRVf = async (amount: BigNumberish, account: string) => {
+    await uAD3CRVfContract.transfer(account, one.mul(amount));
   };
+  const dsaDepositUAD3CRVf = async (amount: BigNumberish) => await depositUAD3CRVf(amount, dsa.address);
 
   const dsaDepositUAD = async (amount: BigNumberish) => {
     await uAD3CRVfContract.remove_liquidity_one_coin(one.mul(amount).mul(110).div(100), 0, one.mul(amount));
@@ -186,6 +185,8 @@ describe("Ubiquity", function () {
     await POOL3Contract.remove_liquidity_one_coin(one.mul(amount).mul(110).div(100), 2, onep.mul(amount));
     await USDTContract.transfer(dsa.address, onep.mul(amount));
   };
+
+
   describe("DSA wallet setup", function () {
     it("Should have contracts deployed.", async function () {
       expect(POOL3Contract.address).to.be.properAddress;
@@ -197,14 +198,9 @@ describe("Ubiquity", function () {
       expect(USDTContract.address).to.be.properAddress;
       expect(BONDContract.address).to.be.properAddress;
       expect(dsa.address).to.be.properAddress;
-
-      expect(instaIndex.address).to.be.properAddress;
-      expect(instaConnectorsV2.address).to.be.properAddress;
-      console.log("instaIndex.address", instaIndex.address);
-      console.log("instaConnectorsV2.address", instaConnectorsV2.address);
     });
     it("Should deposit uAD3CRVf into DSA wallet", async function () {
-      await expect(dsaDepositUAD3CRVf(1)).to.be.revertedWith("ko");
+      await dsaDepositUAD3CRVf(100);
       expect(await uAD3CRVfContract.balanceOf(dsa.address)).to.be.gte(one.mul(100));
     });
     it("Should deposit uAD into DSA wallet", async function () {
@@ -238,7 +234,7 @@ describe("Ubiquity", function () {
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "deposit",
               args: [UAD3CRVF, one.mul(100), 1, 0, 0]
             }
@@ -255,7 +251,7 @@ describe("Ubiquity", function () {
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "deposit",
               args: [UAD, one.mul(100), 1, 0, 0]
             }
@@ -272,7 +268,7 @@ describe("Ubiquity", function () {
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "deposit",
               args: [CRV3, one.mul(100), 1, 0, 0]
             }
@@ -289,7 +285,7 @@ describe("Ubiquity", function () {
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "deposit",
               args: [DAI, one.mul(100), 1, 0, 0]
             }
@@ -306,7 +302,7 @@ describe("Ubiquity", function () {
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "deposit",
               args: [USDC, onep.mul(100), 4, 0, 0]
             }
@@ -323,7 +319,7 @@ describe("Ubiquity", function () {
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "deposit",
               args: [USDT, onep.mul(100), 4, 0, 0]
             }
@@ -347,20 +343,20 @@ describe("Ubiquity", function () {
       await depositAndGetOneBond();
       ({ bondId } = await bondingShare(dsa.address));
 
-      console.log("Mining 50 000 blocks for more than one week, please wait...");
+      await logAll();
 
       console.log("block", await ethers.provider.getBlockNumber());
+      console.log("Mining 50 000 blocks for more than one week, please wait...");
       await mineNBlock(50000, 1);
       console.log("block", await ethers.provider.getBlockNumber());
     });
 
     it("Should withdraw DAI", async function () {
-      console.log("bondId", bondId);
       await expect(
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "withdraw",
               args: [bondId, DAI, 0, 0]
             }
@@ -370,20 +366,19 @@ describe("Ubiquity", function () {
       ).to.be.not.reverted;
     });
 
-
     it("Should withdraw USDC", async function () {
-      await expect(
-        dsa.cast(
-          ...encodeSpells([
-            {
-              connector: ubiquityTest,
-              method: "withdraw",
-              args: [bondId - 1, USDC, 0, 0]
-            }
-          ]),
-          uadWhaleAddress
-        )
-      ).to.be.not.reverted;
+      // await expect(
+      dsa.cast(
+        ...encodeSpells([
+          {
+            connector: UbiquityConnector,
+            method: "withdraw",
+            args: [bondId - 1, USDC, 0, 0]
+          }
+        ]),
+        uadWhaleAddress
+      );
+      // ).to.be.not.reverted;
     });
 
     it("Should withdraw USDT", async function () {
@@ -391,7 +386,7 @@ describe("Ubiquity", function () {
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "withdraw",
               args: [bondId - 2, USDT, 0, 0]
             }
@@ -406,7 +401,7 @@ describe("Ubiquity", function () {
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "withdraw",
               args: [bondId - 3, UAD, 0, 0]
             }
@@ -421,7 +416,7 @@ describe("Ubiquity", function () {
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "withdraw",
               args: [bondId - 4, CRV3, 0, 0]
             }
@@ -436,7 +431,7 @@ describe("Ubiquity", function () {
         dsa.cast(
           ...encodeSpells([
             {
-              connector: ubiquityTest,
+              connector: UbiquityConnector,
               method: "withdraw",
               args: [bondId - 5, UAD3CRVF, 0, 0]
             }
@@ -446,4 +441,5 @@ describe("Ubiquity", function () {
       ).to.be.not.reverted;
     });
   });
+
 });
