@@ -1,6 +1,6 @@
 import { BigNumber, Signer } from "ethers";
 import addresses from "./constant/addresses";
-import abis from "./constant/abis";
+import abis from "../constant/abis";
 import instaImplementationsM1 from "../scripts/constant/abi/core/InstaImplementationM1.json";
 
 import type { HardhatRuntimeEnvironment } from "hardhat/types";

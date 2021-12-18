@@ -1,7 +1,7 @@
 import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-web3";
-import "@nomiclabs/hardhat-waffle";
+// import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
 
 import "@typechain/hardhat";
@@ -13,11 +13,15 @@ import "solidity-coverage";
 import "./tasks/index";
 
 import dotenv from "dotenv";
-dotenv.config({ path: "../.env" });
+import { resolve } from "path";
 
-if (!process.env.ALCHEMY_ID) {
-  throw new Error("ENV variables not set!");
+if (!process.env.ALCHEMY_API_KEY) {
+  dotenv.config({ path: resolve(__dirname, "../.env") });
+  if (!process.env.ALCHEMY_API_KEY) {
+    throw new Error("ENV Variable ALCHEMY_API_KEY not set!");
+  }
 }
+
 const accounts = [process.env.PRIVATE_KEY_1 || "", process.env.PRIVATE_KEY_2 || ""];
 
 const config: HardhatUserConfig = {
@@ -33,7 +37,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 1,
       forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
         blockNumber: 13800000  // InstaIndex set UBIQUITY-A connector 13779456
         // blockNumber: 13601000 // connector block deploy = 13600952 
         // blockNumber: 13100000 // old block, old instaIndex, not using deployed connector 
@@ -52,7 +56,7 @@ const config: HardhatUserConfig = {
     mainnet: {
       chainId: 1,
       // url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
-      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_ID}`,
+      url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts
     },
     rinkeby: {

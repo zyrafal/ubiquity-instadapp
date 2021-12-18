@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 import { sendTx, sendTxEth } from "./sendTx";
 import addresses from "./constant/addresses";
-import abis from "./constant/abis";
+import abis from "../constant/abis";
 import hre from "hardhat";
 
 const { ethers, getNamedAccounts } = hre;

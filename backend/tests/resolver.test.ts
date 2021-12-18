@@ -22,9 +22,6 @@ describe("Ubiquity resolver", function () {
     await deployments.fixture(["InstaUbiquityResolver"]);
     resolver = await ethers.getContract("InstaUbiquityResolver");
 
-    // test resolver is deployed or crash
-    await resolver.ayt();
-
     console.log(`InstaUbiquityResolver deployed @ ${resolver.address}`);
   });
 

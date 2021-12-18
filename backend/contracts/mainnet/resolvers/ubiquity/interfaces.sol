@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.7.6;
-pragma abicoder v2;
+pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "./interfaces/IERC20.sol";
+import "./interfaces/IERC1155.sol";
 
 interface ITWAPOracle {
     function update() external;
@@ -33,7 +32,7 @@ interface IUbiquityAlgorithmicDollarManager {
     function masterChefAddress() external view returns (address);
 }
 
-interface IUbiquityBondingV2 {
+interface IBondingShareV2 {
     struct Bond {
         address minter;
         uint256 lpFirstDeposited;

@@ -1,6 +1,6 @@
 import hre from "hardhat";
 import { expect } from "chai";
-import { sendTx, sendTxEth } from "../scripts/sendTx";
+import { sendTx, sendTxEth } from "../scripts/ubiquity/lib/sendTx";
 import type { Signer } from "ethers";
 
 const { ethers, network, getNamedAccounts } = hre;
@@ -37,7 +37,7 @@ describe("Tenderly fork", function () {
   });
 
   describe("Tenderly fork", function () {
-    it("Should be OK", async function () {});
+    it("Should be OK", async function () { });
 
     if (networkName == "tenderly") {
       it("Should send ETH from deployer with ethersjs", async function () {

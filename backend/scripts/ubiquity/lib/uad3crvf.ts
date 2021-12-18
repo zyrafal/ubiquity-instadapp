@@ -1,4 +1,4 @@
-import uad3crvf from "./uad3crvf.json";
+import uad3crvf from "../uad3crvf.json";
 import { ethers } from "ethers";
 const { utils } = ethers;
 const { Interface, FormatTypes, FunctionFragment } = utils;
