@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import "./interfaces.sol";
 
 contract Helpers {
-    address internal constant dsaConnectorAddress = 0x164B772671A7c2b16FC965Ce74583D361075b3B5;
+    address internal constant dsaConnectorAddress = 0x8EC066D75d665616A94F2EccDBE49b54eAeefc78;
 
     IUbiquityAlgorithmicDollarManager internal constant ubiquityManager =
         IUbiquityAlgorithmicDollarManager(0x4DA97a8b831C345dBe6d16FF7432DF2b7b776d98);
