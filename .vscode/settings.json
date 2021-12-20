@@ -95,5 +95,5 @@
   "favorites.sortOrder": "ASC",
   "favorites.groups": ["Default", "Backend", "Frontend"],
   "favorites.currentGroup": "Backend",
-  "favorites.sortDirection": "DESC"
+  "favorites.sortDirection": "ASC"
 }

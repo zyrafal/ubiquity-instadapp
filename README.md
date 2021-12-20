@@ -18,14 +18,14 @@ To run the full demo, in one terminal :
 ```
 $ cd backend
 $ npm install
-$ npm dev
+$ npm run dev
 ```
 
 and in another terminal
 
 ```
 $ cd frontend
-$ yarn install
+$ yarn
 $ yarn dev
 ```
 

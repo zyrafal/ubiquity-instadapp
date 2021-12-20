@@ -106,5 +106,13 @@
         "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
         "workspacePath": "frontend/package.json",
         "id": "RgGmNUcJD1EIfi37"
+    },
+    {
+        "type": "File",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/README.md",
+        "parent_id": null,
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "README.md",
+        "id": "Jjyvmxa9ekO2G0rK"
     }
 ]
