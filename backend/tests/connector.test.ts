@@ -4,19 +4,19 @@ const { waffle, ethers } = hre;
 const { provider } = waffle;
 const { BigNumber, utils } = ethers;
 
-import { deployAndEnableConnector } from "../scripts/tests/deployAndEnableConnector";
-import { buildDSAv2 } from "../scripts/tests/buildDSAv2";
-import { encodeSpells } from "../scripts/tests/encodeSpells";
-import { addresses } from "../scripts/tests/mainnet/addresses";
-import { abis } from "../scripts/constant/abis";
-import { impersonateAccounts } from "../scripts/tests/impersonate";
+import { deployAndEnableConnector } from "../scripts/instadapp/tests/deployAndEnableConnector";
+import { buildDSAv2 } from "../scripts/instadapp/tests/buildDSAv2";
+import { encodeSpells } from "../scripts/instadapp/tests/encodeSpells";
+import { addresses } from "../scripts/instadapp/tests/mainnet/addresses";
+import { abis } from "../scripts/instadapp/constant/abis";
+import { impersonateAccounts } from "../scripts/instadapp/tests/impersonate";
 import type { Signer, Contract, BigNumberish } from "ethers";
-import { forkReset, sendEth, mineNBlock } from "./utils";
+import { forkReset, sendEth, mineNBlock } from "../scripts/ubiquity/lib/utils";
 
-import { abi as implementationsABI } from "../scripts/constant/abi/core/InstaImplementations.json";
+import { abi as implementationsABI } from "../scripts/instadapp/constant/abi/core/InstaImplementations.json";
 const implementationsMappingAddr = "0xCBA828153d3a85b30B5b912e1f2daCac5816aE9D";
 
-import ConnectV2UbiquityAbi from "../scripts/constant/abi/connectors/ubiquity.json";
+import ConnectV2UbiquityAbi from "../scripts/instadapp/constant/abi/connectors/ubiquity.json";
 const UbiquityConnector = "UBIQUITY-A";
 
 

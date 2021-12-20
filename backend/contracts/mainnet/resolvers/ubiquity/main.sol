@@ -1,15 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.7.6;
-pragma abicoder v2;
+pragma solidity ^0.8.4;
 
 import "./interfaces.sol";
 import "./helpers.sol";
 
 contract Resolver is Helpers {
-    function ayt() public pure returns (bool) {
-        return true;
-    }
-
     function getUbiquityAddresses() public view returns (UbiquityAddresses memory addresses) {
         addresses.ubiquityManagerAddress = address(ubiquityManager);
         addresses.masterChefAddress = address(getMasterChef());

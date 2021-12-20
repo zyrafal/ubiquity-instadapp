@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 
-import "@openzeppelin/contracts/utils/EnumerableSet.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
+import "../openzeppelin/v3/EnumerableSet.sol";
+import "../openzeppelin/v3/Address.sol";
+import "../openzeppelin/v3/Context.sol";
 
 interface IndexInterface {
     function master() external view returns (address);
@@ -19,11 +19,8 @@ contract InstaMappingController is Context {
 
     mapping(address => EnumerableSet.AddressSet) private _roles;
 
-    IndexInterface public constant instaIndex =
-        IndexInterface(0x2971AdFa57b20E5a416aE5a708A8655A9c74f723);
-    ConnectorsInterface public constant connectors =
-        ConnectorsInterface(0x97b0B3A8bDeFE8cB9563a3c610019Ad10DB8aD11); // InstaConnectorsV2
-
+    IndexInterface public constant instaIndex = IndexInterface(0x2971AdFa57b20E5a416aE5a708A8655A9c74f723);
+    ConnectorsInterface public constant connectors = ConnectorsInterface(0x97b0B3A8bDeFE8cB9563a3c610019Ad10DB8aD11); // InstaConnectorsV2
 
     /**
      * @dev Emitted when `account` is granted `role`.
@@ -37,13 +34,9 @@ contract InstaMappingController is Context {
      *   - if using `revokeRole`, it is the insta master
      *   - if using `renounceRole`, it is the role bearer (i.e. `account`)
      */
-    event RoleRevoked(
-        address indexed role,
-        address indexed account,
-        address indexed sender
-    );
+    event RoleRevoked(address indexed role, address indexed account, address indexed sender);
 
-    modifier onlyMaster {
+    modifier onlyMaster() {
         require(
             instaIndex.master() == _msgSender() || connectors.chief(_msgSender()),
             "MappingController: sender must be master or chief"
@@ -78,11 +71,7 @@ contract InstaMappingController is Context {
      * https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post]
      * for more information.
      */
-    function getRoleMember(address role, uint256 index)
-        public
-        view
-        returns (address)
-    {
+    function getRoleMember(address role, uint256 index) public view returns (address) {
         return _roles[role].at(index);
     }
 
@@ -96,11 +85,7 @@ contract InstaMappingController is Context {
      *
      * - the caller must be the master.
      */
-    function grantRole(address role, address account)
-        public
-        virtual
-        onlyMaster
-    {
+    function grantRole(address role, address account) public virtual onlyMaster {
         _grantRole(role, account);
     }
 
@@ -113,11 +98,7 @@ contract InstaMappingController is Context {
      *
      * - the caller must be the master.
      */
-    function revokeRole(address role, address account)
-        public
-        virtual
-        onlyMaster
-    {
+    function revokeRole(address role, address account) public virtual onlyMaster {
         _revokeRole(role, account);
     }
 
@@ -136,10 +117,7 @@ contract InstaMappingController is Context {
      * - the caller must be `account`.
      */
     function renounceRole(address role, address account) public virtual {
-        require(
-            account == _msgSender(),
-            "MappingController: can only renounce roles for self"
-        );
+        require(account == _msgSender(), "MappingController: can only renounce roles for self");
 
         _revokeRole(role, account);
     }

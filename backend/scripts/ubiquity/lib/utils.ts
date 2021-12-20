@@ -1,5 +1,5 @@
 import hre, { ethers, network } from "hardhat";
-import hardhatConfig from "../hardhat.config";
+import hardhatConfig from "../../../hardhat.config";
 
 export async function forkReset(blockNumber: any) {
   await hre.network.provider.request({
@@ -35,10 +35,12 @@ export async function mineNBlock(
   secondsBetweenBlock?: number
 ): Promise<void> {
   const blockBefore = await ethers.provider.getBlock("latest");
-  const maxMinedBlockPerBatch = 5000;
+  const maxMinedBlockPerBatch = 10000;
   let blockToMine = blockCount;
   let blockTime = blockBefore.timestamp;
-  while (blockToMine > maxMinedBlockPerBatch) {
+  while (blockToMine >= maxMinedBlockPerBatch) {
+    process.stdout.write(`${blockToMine} `);
+
     // eslint-disable-next-line @typescript-eslint/no-loop-func
     const minings = [...Array(maxMinedBlockPerBatch).keys()].map(
       (_v, i) => {
@@ -55,10 +57,5 @@ export async function mineNBlock(
       1 +
       maxMinedBlockPerBatch * (secondsBetweenBlock || 1);
   }
-  const minings = [...Array(blockToMine).keys()].map((_v, i) => {
-    const newTs = blockTime + i + (secondsBetweenBlock || 1);
-    return mineBlock(newTs);
-  });
-  // eslint-disable-next-line no-await-in-loop
-  await Promise.all(minings);
+  console.log(blockToMine);
 };

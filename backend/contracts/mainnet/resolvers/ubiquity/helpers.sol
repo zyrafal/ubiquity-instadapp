@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.7.6;
-pragma abicoder v2;
+pragma solidity ^0.8.4;
 
 import "./interfaces.sol";
 
@@ -82,8 +81,8 @@ contract Helpers {
         return IERC1155(ubiquityManager.debtCouponAddress());
     }
 
-    function getBondingShare() internal view returns (IUbiquityBondingV2) {
-        return IUbiquityBondingV2(ubiquityManager.bondingShareAddress());
+    function getBondingShare() internal view returns (IBondingShareV2) {
+        return IBondingShareV2(ubiquityManager.bondingShareAddress());
     }
 
     function getBondingShareIds(address user) internal view returns (uint256[] memory bondIds) {

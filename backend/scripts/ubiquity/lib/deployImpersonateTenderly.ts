@@ -1,7 +1,7 @@
 import { BigNumber, Signer } from "ethers";
 import { sendTx, sendTxEth } from "./sendTx";
 import addresses from "./constant/addresses";
-import abis from "./constant/abis";
+import abis from "../constant/abis";
 
 import type { HardhatRuntimeEnvironment } from "hardhat/types";
 import type { SignerWithAddress } from "hardhat-deploy-ethers/dist/src/signers";

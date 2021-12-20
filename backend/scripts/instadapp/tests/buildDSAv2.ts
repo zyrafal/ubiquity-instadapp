@@ -5,7 +5,7 @@ import { addresses as addressesArbitrum } from "./arbitrum/addresses";
 import { addresses as addressesAvalanche } from "./avalanche/addresses";
 import { addresses } from "./mainnet/addresses";
 import { abis } from "../constant/abis";
-import { abi } from "../../deployements/mainnet/Implementation_m1.sol/InstaImplementationM1.json";
+import { abi } from "../../../deployements/mainnet/Implementation_m1.sol/InstaImplementationM1.json";
 
 function getAddress(network: string | undefined) {
   if (network === "polygon") return addressesPolygon.core.instaIndex;
