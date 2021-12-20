@@ -1,0 +1,110 @@
+[
+    {
+        "type": "Group",
+        "name": "Assembly",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "5Zd6WehRn4YcGoUQ"
+    },
+    {
+        "type": "Directory",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/frontend/core/strategies/protocols/ubiquity",
+        "parent_id": "5Zd6WehRn4YcGoUQ",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "frontend/core/strategies/protocols/ubiquity",
+        "id": "dbeHIAnoxv9r620w"
+    },
+    {
+        "type": "File",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/frontend/pages/mainnet/ubiquity.vue",
+        "parent_id": "5Zd6WehRn4YcGoUQ",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "frontend/pages/mainnet/ubiquity.vue",
+        "id": "AefyvLTc52j9suVg"
+    },
+    {
+        "type": "File",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/frontend/components/sidebar/context/ubiquity/SidebarUbiquitySupply.vue",
+        "parent_id": "5Zd6WehRn4YcGoUQ",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "frontend/components/sidebar/context/ubiquity/SidebarUbiquitySupply.vue",
+        "id": "2KdC0ZWpIx98QzNj"
+    },
+    {
+        "type": "File",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/frontend/constant/addresses.ts",
+        "parent_id": "5Zd6WehRn4YcGoUQ",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "frontend/constant/addresses.ts",
+        "id": "aObEduTvImrDCzFP"
+    },
+    {
+        "type": "File",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/frontend/composables/useSidebar.ts",
+        "parent_id": "5Zd6WehRn4YcGoUQ",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "frontend/composables/useSidebar.ts",
+        "id": "dIX7EubmwYsygq1t"
+    },
+    {
+        "type": "Group",
+        "name": "Backend",
+        "parent_id": null,
+        "workspaceRoot": null,
+        "workspacePath": null,
+        "id": "F8VGoas9DOevrXYf"
+    },
+    {
+        "type": "File",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/backend/hardhat.config.ts",
+        "parent_id": "F8VGoas9DOevrXYf",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "backend/hardhat.config.ts",
+        "id": "hbEvMXpdyruJIa5H"
+    },
+    {
+        "type": "Directory",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/backend/contracts/mainnet/connectors/ubiquity",
+        "parent_id": "F8VGoas9DOevrXYf",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "backend/contracts/mainnet/connectors/ubiquity",
+        "id": "ZT2Pu3BNYR6QrGfV",
+        "label": "Connector contracts"
+    },
+    {
+        "type": "File",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/backend/contracts/mainnet/connectors/ubiquity/main.sol",
+        "parent_id": "F8VGoas9DOevrXYf",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "backend/contracts/mainnet/connectors/ubiquity/main.sol",
+        "id": "HGncLO3D4qJEtjuh",
+        "label": "main.sol (Connector)"
+    },
+    {
+        "type": "Directory",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/backend/contracts/mainnet/resolvers/ubiquity",
+        "parent_id": "F8VGoas9DOevrXYf",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "backend/contracts/mainnet/resolvers/ubiquity",
+        "id": "wBgdAC6mivhlYpFJ",
+        "label": "Resolver contracts"
+    },
+    {
+        "type": "File",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/backend/contracts/mainnet/resolvers/ubiquity/main.sol",
+        "parent_id": "F8VGoas9DOevrXYf",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "backend/contracts/mainnet/resolvers/ubiquity/main.sol",
+        "id": "O96fNgLiIMaYmdP5",
+        "label": "main.sol (Resolver)"
+    },
+    {
+        "type": "File",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/frontend/package.json",
+        "parent_id": "5Zd6WehRn4YcGoUQ",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "frontend/package.json",
+        "id": "RgGmNUcJD1EIfi37"
+    }
+]

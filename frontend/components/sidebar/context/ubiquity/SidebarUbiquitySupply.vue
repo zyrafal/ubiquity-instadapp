@@ -121,10 +121,10 @@ export default defineComponent({
       console.log(amount);
       const spells = dsa.value.Spell();
       const DAI = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
-      const ubiquityTest = "Ubiquity-v1";
+      const ubiquityProd = "UBIQUITY-A";
 
       spells.add({
-        connector: ubiquityTest,
+        connector: ubiquityProd,
         method: "deposit",
         args: [DAI, amount, 4, 0, 0]
       });

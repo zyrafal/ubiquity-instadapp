@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "clean": "npx hardhat clean",
     "test": "npx hardhat test",
-    "build": "npx hardhat compile"
+    "build": "npx hardhat compile",
+    "deploy": "npx hardhat deploy",
+    "dev": "npx hardhat node"
   },
   "keywords": [],
   "author": "",

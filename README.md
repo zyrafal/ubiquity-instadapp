@@ -1,29 +1,34 @@
 # Ubiquity - InstaDapp
 
-Ubiquity integration with InstaDapp
+## Ubiquity integration with InstaDapp
 
 3 components :
 
-BackEnd (solidity / smartcontracts)
-- resolver : get Ubiquity datas, i.e. read from Ubiquity protocol
-- connector : interact with Ubiquity prootocol, i.e. write into Ubiquity protocol
+Backend (solidity / smartcontracts)
 
-Frontend  (html / typescript / UI) 
-- assembly : display Ubiquity datas issued from resolver, input Ubiquity datas to feed connector
+1. resolver : get Ubiquity datas, i.e. read from Ubiquity protocol
+2. connector : interact with Ubiquity prootocol, i.e. write into Ubiquity protocol
 
+Frontend (html / typescript / UI)
 
-To run the full demo : 
+3. assembly : display Ubiquity datas issued from resolver, input Ubiquity datas to feed connector
 
-in one terminal : 
-$ cd backend 
+To run the full demo, in one terminal :
+
+```
+$ cd backend
 $ npm install
-$ npx hardhat node
+$ npm dev
+```
 
-in another terminal
+and in another terminal
+
+```
 $ cd frontend
 $ yarn install
 $ yarn dev
+```
 
-use your browser with metamask, select (or create) localhost network with this rpc http://localhost:8545 and chainId 1
-and connect to url displayed after "yarn dev", should be  http://localhost:3000/                   │
- 
+Use your browser with metamask, select (or create) localhost network with this rpc `http://localhost:8545` and chainId 1
+
+And connect to url displayed after "yarn dev", should be http://localhost:3000
