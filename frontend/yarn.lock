@@ -1789,9 +1789,9 @@
     "@gnosis.pm/safe-apps-provider" "0.7.1"
 
 "@gnosis.pm/safe-react-gateway-sdk@^2.5.6":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-react-gateway-sdk/-/safe-react-gateway-sdk-2.6.0.tgz#347122ad67aa4a38caa40758ebf35a8f9e98358c"
-  integrity sha512-mGse0EJ4e77sgf5gtTvaYIToLmjxdIQ6YlV0VgLHTXb3WLm1dQ5bTiynU4Nr4guc27qu45puDx4sqXBUmuMybQ==
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-react-gateway-sdk/-/safe-react-gateway-sdk-2.7.0.tgz#e22a5700853db082088c8146a783304d27f4db3f"
+  integrity sha512-x/qFpj2SGMtyK1DlAxkszG24lIhkAC9BfuOxQd6Ci7YuVIBt5RPFc61sdH/L/3AzZXmNQeKd604PHhc9isGSrg==
   dependencies:
     isomorphic-unfetch "^3.1.0"
 
@@ -6785,10 +6785,10 @@ drbg.js@^1.0.1:
     create-hash "^1.1.2"
     create-hmac "^1.1.4"
 
-dsa-connect@^0.4.4:
-  version "0.4.9"
-  resolved "https://registry.yarnpkg.com/dsa-connect/-/dsa-connect-0.4.9.tgz#852d7dec6ef850a73ef70c50cef5a82ff7fcb803"
-  integrity sha512-kRGRqltLo8lZsceVUQ4To8VoC4QG+i/W6XBw6zPpKogC6mlaZeVciXo4SVwePpRnDC1nQwbWQcwZLy7Al07PBQ==
+dsa-connect@^0.5.13:
+  version "0.5.13"
+  resolved "https://registry.yarnpkg.com/dsa-connect/-/dsa-connect-0.5.13.tgz#ca7d4c365b2c48f9c9f0f2a7245d6c0675643c38"
+  integrity sha512-gCQfZ6Pgbjzg1otqgMzEIDefEW29kyZ+l4ABocXmyDovgMaPqtz091Llpn0GuiELqSx3rEDwrR+4qK9dppgYWw==
 
 duplexer3@^0.1.4:
   version "0.1.4"
