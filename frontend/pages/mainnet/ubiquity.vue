@@ -22,9 +22,9 @@
             <UbiquityIcon class="w-8 h-8 text-white" />
           </div>
         </div>
-        <h1 class="ml-4 text-primary-black text-2xl font-semibold">Ubiquity</h1>
+        <h1 class="ml-4 text-primary-black text-2xl font-semibold">Ubiquity DAO</h1>
       </div>
-
+<!-- 
       <ButtonCTAOutlined
         class="px-4 h-9 w-[173px]"
         @click="$router.push({ hash: 'strategies?protocol=ubiquity' })"
@@ -46,7 +46,7 @@
             fill="#1874FF"
           />
         </svg>
-      </ButtonCTAOutlined>
+      </ButtonCTAOutlined> -->
     </div>
 
     <div class="mt-10">
@@ -55,7 +55,46 @@
       <div
         class="px-1 mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-3 xl:gap-[18px]"
       >
-        <div class="shadow rounded-lg py-8 px-6 flex">
+        <div class="shadow rounded-lg p-0 flex">
+          <div class="flex flex-1 flex-col justify-between py-6 px-6">
+            <h4 class="text-xl text-primary-black font-semibold">
+              Stabilize Liquity Protocol
+            </h4>
+            <a class="mt-4 text-[#1874FF] text-right font-medium cursor-pointer">
+              - Learn More -
+            </a>
+          </div>
+          <div class="flex items-center justify-center rounded-r-lg bg-[#1874FF] w-[50px]">
+            <SVGScale class="h-12 text-white" />
+          </div>
+        </div>
+        <div class="shadow rounded-lg p-0 flex">
+          <div class="flex flex-1 flex-col justify-between py-6 px-6">
+            <h4 class="text-xl text-primary-black font-semibold">
+              Get Passive Yield on Your LUSD
+            </h4>
+            <a class="mt-4 text-[#1874FF] text-right font-medium cursor-pointer">
+              - Learn More -
+            </a>
+          </div>
+          <div class="flex items-center justify-center rounded-r-lg bg-[#1874FF] w-[50px]">
+            <SVGWaterDrop class="h-12 text-white" />
+          </div>
+        </div>
+        <div class="shadow rounded-lg p-0 flex">
+          <div class="flex flex-1 flex-col justify-between py-6 px-6">
+            <h4 class="text-xl text-primary-black font-semibold">
+              Improved Liquidity Mining Program
+            </h4>
+            <a class="mt-4 text-[#1874FF] text-right font-medium cursor-pointer">
+              - Learn More -
+            </a>
+          </div>
+          <div class="flex items-center justify-center rounded-r-lg bg-[#1874FF] w-[50px]">
+            <SVGSavingMoney class="h-12 text-white" />
+          </div>
+        </div>
+        <!-- <div class="shadow rounded-lg py-8 px-6 flex">
           <div class="flex-1">
             <h3 class="text-2xl text-primary-black font-medium">
               {{ formatNumber18usd(datas.twapPrice) }}
@@ -67,209 +106,111 @@
           <div class="flex items-center">
             <SVGPrice class="h-12 text-primary-gray" />
           </div>
-        </div>
-        <div class="shadow rounded-lg py-8 px-6 flex">
-          <div class="flex-1">
-            <h3 class="text-2xl text-primary-black font-medium">
-              {{ formatNumber18usd(datas.uadTotalSupply) }}
-            </h3>
-            <p class="mt-4 text-primary-gray font-medium">
-              uAD Total Supply
-            </p>
-          </div>
-          <div class="flex items-center">
-            <SVGPrice class="h-12 text-primary-gray" />
-          </div>
-        </div>
-        <div class="shadow rounded-lg py-8 px-6 flex">
-          <div class="flex-1">
-            <h3 class="text-2xl text-primary-black font-medium">
-              {{ formatNumber18usd(datas.ubqTotalSupply) }}
-            </h3>
-            <p class="mt-4 text-primary-gray font-medium">
-              UBQ Total Supply
-            </p>
-          </div>
-          <div class="flex items-center">
-            <SVGPrice class="h-12 text-primary-gray" />
-          </div>
-        </div>
-        <div class="shadow rounded-lg py-8 px-6 flex">
-          <div class="flex-1">
-            <h3 class="text-2xl text-primary-black font-medium">
-              {{ formatNumber18usd(datas.uarTotalSupply) }}
-            </h3>
-            <p class="mt-4 text-primary-gray font-medium">
-              uAR Total Supply
-            </p>
-          </div>
-          <div class="flex items-center">
-            <SVGPrice class="h-12 text-primary-gray" />
-          </div>
-        </div>
-        <div class="shadow rounded-lg py-8 px-6 flex">
-          <div class="flex-1">
-            <h3 class="text-2xl text-primary-black font-medium">
-              {{ formatNumber18usd(datas.lpTotalSupply) }}
-            </h3>
-            <p class="mt-4 text-primary-gray font-medium">
-              LP Total Supply
-            </p>
-          </div>
-          <div class="flex items-center">
-            <SVGPrice class="h-12 text-primary-gray" />
-          </div>
-        </div>
-        <div class="shadow rounded-lg py-8 px-6 flex">
-          <div class="flex-1">
-            <h3 class="text-2xl text-primary-black font-medium">
-              {{ formatNumber(datas.bondingSharesTotalSupply) }}
-            </h3>
-            <p class="mt-4 text-primary-gray font-medium">
-              BondingShare total supply
-            </p>
-          </div>
-          <div class="flex items-center">
-            <SVGPrice class="h-12 text-primary-gray" />
-          </div>
-        </div>
+        </div> -->
       </div>
 
-      <div class="mx-auto w-[512px] shadow rounded-[10px] px-8 py-12 mt-[40px]">
-        <div class="mt-7">
-          <button
-            class="flex items-center justify-center flex-shrink-0 py-2 font-semibold text-white whitespace-no-wrap duration-75 ease-out transform rounded-[4px] select-none bg-ocean-blue-pure shadow-cta focus:outline-none dark:shadow-none px-8 h-16 w-full hover:-translate-y-px active:translate-y-px"
-            @click="openSupply"
+      <div
+        class="px-1 mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:gap-[18px]"
+      >
+        <div class="shadow rounded-lg py-8 px-6 flex">
+          <div
+            style="background: radial-gradient(42.15% 42.15% at 48.94% 48.94%, #D6DAE0 75.67%, #F0F3F9 100%), #C4C4C4;"
+            class="w-16 h-16 rounded-full mr-4 flex items-center justify-center border border-[#CCDCF3]"
           >
-            Deposit
-            <!---->
-          </button>
+            <div
+              class="w-12 h-12 rounded-full flex items-center justify-center bg-[#00E5DC]"
+            >
+              <SVGUad class="w-8 h-8 text-black" />
+            </div>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-2xl text-primary-black font-medium">
+              {{ formatNumber18usd(datas.twapPrice) }}
+            </h3>
+            <p class="mt-2 text-primary-gray font-medium">
+              uAD Twap Price
+            </p>
+          </div>
+          <div class="flex items-center">
+            <SVGDiscount class="h-12 text-primary-gray" />
+          </div>
+        </div>
+        <div class="shadow rounded-lg py-8 px-6 md:flex justify-between block">
+          <div class="flex">
+            <div
+              style="background: radial-gradient(42.15% 42.15% at 48.94% 48.94%, #D6DAE0 75.67%, #F0F3F9 100%), #C4C4C4;"
+              class="w-16 h-16 rounded-full mr-4 flex items-center justify-center border border-[#CCDCF3]"
+            >
+              <div
+                class="w-12 h-12 rounded-full flex items-center justify-center bg-[#00E5DC]"
+              >
+                <UbiquityIcon class="w-8 h-8 text-black" />
+              </div>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-2xl text-primary-black font-medium">
+                {{ formatNumber18usd(datas.uadTotalSupply) }}
+              </h3>
+              <p class="mt-2 text-primary-gray font-medium">
+                UBQ Rewards
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center mt-4 md:mt-0">
+            <button
+              class="flex items-center uppercase justify-center flex-shrink-0 py-2 font-semibold text-white whitespace-no-wrap duration-75 ease-out transform rounded-[4px] select-none bg-ocean-blue-pure shadow-cta focus:outline-none dark:shadow-none px-8 h-12 w-full hover:-translate-y-px active:translate-y-px"
+              @click="openSupply"
+            >
+              Claim All
+            </button>
+          </div>
         </div>
       </div>
 
       <div class="mt-[60px]" v-if="position">
         <div
-          class="w-full flex flex-col mt-6 sm:flex-row sm:items-center sm:justify-between xl:mt-4"
+          class="w-full flex flex-col mt-6 sm:flex-row sm:items-center sm:justify-start xl:mt-4"
         >
-          <h2 class="text-primary-gray text-lg font-semibold">
-            Your Ubiquity Inventory
+          <div class="flex items-center">
+            <SVGGorilla class="h-12 text-primary-gray" />
+          </div>
+          <h2 class="text-primary-gray pl-2 text-lg font-semibold">
+            Ape into uAD pools
           </h2>
         </div>
 
         <div
-          class="px-1 mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-3 xl:gap-[18px]"
+          class="px-1 mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-1 xl:gap-[18px]"
         >
-          <div class="shadow rounded-lg py-8 px-6 flex">
-            <div class="flex-1">
-              <h3 class="text-2xl text-primary-black font-medium">
-                {{ formatNumber18(inventory.uadBalance) }}
-              </h3>
-              <p class="mt-4 text-primary-gray font-medium">
-                uAD
-              </p>
-            </div>
+          <div
+            class="flex-shrink-0 bg-white rounded-lg relative flex flex-col flex-1 px-4 pt-4 pb-6 dark:bg-dark-500"
+            style="box-shadow: -1px -3px 10px rgba(12, 25, 91, 0.03), 2px 4px 12px rgba(12, 25, 91, 0.05)"
+          >
             <div class="flex items-center">
-              <SVGBalance class="h-12" />
+              <IconCurrency currency="crv" class="w-12 h-12" no-height />
+              <div class="flex flex-col flex-grow mx-4">
+                <div class="mb-1 font-medium leading-none whitespace-no-wrap text-19">{{ formatUsd(3612.017) }}</div>
+                <div class="flex leading-none whitespace-no-wrap">
+                  <span class="text-grey-pure text-14">{{ formatDecimal(4.2) }} UAD3CRV-LP</span>
+                  <Info :text="`${formatUsd(200, 2)}/UAD3CRV-LP`" icon="price" class="ml-1" />
+                </div>
+              </div>
+              <div class="self-start">
+                <Badge color="blue" class="w-16">STAKED</Badge>
+              </div>
             </div>
-          </div>
 
-          <div class="shadow rounded-lg py-8 px-6 flex">
-            <div class="flex-1">
-              <h3 class="text-2xl text-primary-black font-medium">
-                {{ formatNumber18(inventory.uad3crvBalance) }}
-              </h3>
-              <p class="mt-4 text-primary-gray font-medium">
-                uAD3CRV-f
-              </p>
+            <div class="block md:flex items-center justify-between px-0 mt-6">
+              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover">Ape in</button>
+              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" >Withdraw</button>
+              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" >Stake</button>
+              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" >Unstake</button>
             </div>
-            <div class="flex items-center">
-              <SVGBalance class="h-12" />
-            </div>
-          </div>
 
-          <div class="shadow rounded-lg py-8 px-6 flex">
-            <div class="flex-1">
-              <h3 class="text-2xl text-primary-black font-medium">
-                {{ formatNumber(inventory.bondBalance) }}
-              </h3>
-              <p class="mt-4 text-primary-gray font-medium">Bonding Shares</p>
-            </div>
-            <div class="flex items-center">
-              <SVGBalance class="h-12" />
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="px-1 mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-3 xl:gap-[18px]"
-        >
-          <div class="shadow rounded-lg py-8 px-6 flex">
-            <div class="flex-1">
-              <h3 class="text-2xl text-primary-black font-medium">
-                {{ formatNumber18(inventory.ubqBalance) }}
-              </h3>
-              <p class="mt-4 text-primary-gray font-medium">
-                UBQ
-              </p>
-            </div>
-            <div class="flex items-center">
-              <SVGBalance class="h-12" />
-            </div>
-          </div>
-
-          <div class="shadow rounded-lg py-8 px-6 flex">
-            <div class="flex-1">
-              <h3 class="text-2xl text-primary-black font-medium">
-                {{ formatNumber18(inventory.crv3Balance) }}
-              </h3>
-              <p class="mt-4 text-primary-gray font-medium">3CRV</p>
-            </div>
-            <div class="flex items-center">
-              <SVGBalance class="h-12" />
-            </div>
-          </div>
-
-          <div class="shadow rounded-lg py-8 px-6 flex">
-            <div class="flex-1">
-              <h3 class="text-2xl text-primary-black font-medium">
-                {{ formatNumber18(inventory.uarBalance) }}
-              </h3>
-              <p class="mt-4 text-primary-gray font-medium">uAR</p>
-            </div>
-            <div class="flex items-center">
-              <SVGBalance class="h-12" />
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="px-1 mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-3 xl:gap-[18px]"
-        >
-          <div class="shadow rounded-lg py-8 px-6 flex">
-            <div class="flex-1">
-              <h3 class="text-2xl text-primary-black font-medium">
-                {{ formatNumber18(inventory.udebtBalance) }}
-              </h3>
-              <p class="mt-4 text-primary-gray font-medium">
-                uDEBT
-              </p>
-            </div>
-            <div class="flex items-center">
-              <SVGBalance class="h-12" />
-            </div>
-          </div>
-          <div class="shadow rounded-lg py-8 px-6 flex">
-            <div class="flex-1">
-              <h3 class="text-2xl text-primary-black font-medium">
-                {{ formatNumber18(inventory.ubqRewards) }}
-              </h3>
-              <p class="mt-4 text-primary-gray font-medium">
-                UBQ rewards
-              </p>
-            </div>
-            <div class="flex items-center">
-              <SVGBalance class="h-12" />
-            </div>
+            <hr class="mt-4" />
+            <p class="mt-4 text-primary-gray font-medium text-xl text-center">
+              Remaining Lockup Time: Approximately 13 days
+            </p>
           </div>
         </div>
       </div>
@@ -291,6 +232,14 @@ import SVGPrice from "@/assets/img/icons/price.svg?inline";
 import SVGPercent from "@/assets/img/icons/percent.svg?inline";
 
 import UbiquityIcon from "~/assets/icons/ubiquity.svg?inline";
+import SVGUad from "~/assets/icons/uad.svg?inline";
+import SVGScale from "~/assets/icons/scale.svg?inline";
+import SVGWaterDrop from "~/assets/icons/water-drop.svg?inline";
+import SVGSavingMoney from "~/assets/icons/saving-money.svg?inline";
+import SVGDiscount from "~/assets/icons/discount.svg?inline";
+import SVGGorilla from "~/assets/icons/gorilla.svg?inline";
+import SVGCrv3 from "~/assets/icons/crv3.svg?inline";
+
 import ButtonCTAOutlined from "~/components/common/input/ButtonCTAOutlined.vue";
 import UbqInput from "~/components/common/input/InputNumeric.vue";
 
@@ -298,7 +247,14 @@ export default defineComponent({
   components: {
     SVGBalance,
     SVGPrice,
+    SVGScale,
+    SVGWaterDrop,
+    SVGSavingMoney,
+    SVGDiscount,
+    SVGGorilla,
     SVGPercent,
+    SVGCrv3,
+    SVGUad,
     BackIcon,
     UbiquityIcon,
     UbqInput,
@@ -337,6 +293,7 @@ export default defineComponent({
       addresses,
       datas,
       inventory,
+      formatUsd,
       formatNumber,
       formatNumber18,
       formatNumber18usd,

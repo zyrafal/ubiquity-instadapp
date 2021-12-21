@@ -87,7 +87,7 @@ const appsPerNetwork = {
     {
       id: "ubiquity",
       icon: UbiquityIcon,
-      name: "Ubiquity",
+      name: "Ubiquity DAO",
       url: "/mainnet/ubiquity",
       description: "Algorithmic Dollar"
     }

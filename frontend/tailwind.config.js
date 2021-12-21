@@ -108,7 +108,8 @@ module.exports = {
         90: '0.90',
       },
       fontFamily: {
-        sans: ["Montserrat", ...defaultTheme.fontFamily.sans]
+        sans: defaultTheme.fontFamily.sans
+        // sans: ["Montserrat", ...defaultTheme.fontFamily.sans]
       },
       animation: {
         'spin-loading': 'spin 1s cubic-bezier(.6,0,.4,1) infinite',
