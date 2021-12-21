@@ -1,10 +1,9 @@
 import type { DeployFunction } from "hardhat-deploy/types";
 import { abis } from "../scripts/instadapp/constant/abis";
-import { abi as abiDsaV2 } from "../deployements/mainnet/Implementation_m1.sol/InstaImplementationM1.json";
 
 const deployDsaV2: DeployFunction = async function ({ deployments, ethers, getNamedAccounts }) {
   const instaIndexAddress = "0x2971AdFa57b20E5a416aE5a708A8655A9c74f723";
-  const deployer = await ethers.getNamedSigner("deployer");
+  const { deployer, daiWhale } = await ethers.getNamedSigners();
   const { tester } = await getNamedAccounts();
 
   const instaIndex = await ethers.getContractAt(abis.core.instaIndex, instaIndexAddress);
@@ -13,14 +12,19 @@ const deployDsaV2: DeployFunction = async function ({ deployments, ethers, getNa
   const event = receipt.events.find(
     (a: { event: string }) => a.event === "LogAccountCreated"
   );
-  const dsaV2Address =  event.args.account;
-  console.log("dsaV2",dsaV2Address, "for", tester);
+  const dsaV2Address = event.args.account;
+  console.log("dsaV2", dsaV2Address, "for", tester);
 
   const tx2 = await (await deployer.sendTransaction({
-    to: dsaV2Address, value: ethers.BigNumber.from(10).pow(18).mul(10)
+    to: dsaV2Address, value: ethers.BigNumber.from(10).pow(18).mul(12)
   })).wait();
-  console.log(tx2);
-};
+
+  const erc20ABI = ["function transfer(address to, uint amount) returns (boolean)"];
+  const DAI = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
+  const DAIContract = new ethers.Contract(DAI, erc20ABI, daiWhale);
+  await DAIContract.transfer(dsaV2Address, ethers.BigNumber.from(10).pow(18).mul(4200))
+
+}
 deployDsaV2.tags = ["dsaV2"];
 
 export default deployDsaV2;

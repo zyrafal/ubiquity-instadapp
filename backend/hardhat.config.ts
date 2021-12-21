@@ -31,7 +31,8 @@ const config: HardhatUserConfig = {
     signer: { default: 0 },
     tester: process.env.PUBLIC_KEY || "",
     uadWhale: "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd",
-    ethWhale: "0x1b3cB81E51011b549d78bf720b0d924ac763A7C2"
+    ethWhale: "0x1b3cB81E51011b549d78bf720b0d924ac763A7C2",
+    daiWhale: "0x82810e81CAD10B8032D39758C8DBa3bA47Ad7092"
   },
   networks: {
     hardhat: {
