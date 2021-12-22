@@ -26,5 +26,9 @@ const deployDsaV2: DeployFunction = async function ({ deployments, ethers, getNa
 
 }
 deployDsaV2.tags = ["dsaV2"];
+deployDsaV2.skip = async ({ network }) => {
+  return network.name != "hardhat";
+};
+
 
 export default deployDsaV2;
