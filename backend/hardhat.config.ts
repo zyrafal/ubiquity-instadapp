@@ -22,7 +22,7 @@ if (!process.env.ALCHEMY_API_KEY) {
   }
 }
 
-const accounts = [process.env.PRIVATE_KEY_1 || "", process.env.PRIVATE_KEY_2 || ""];
+const accounts = [process.env.UBQ || "", process.env.UBQ || ""];
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -40,16 +40,16 @@ const config: HardhatUserConfig = {
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
         blockNumber: 13800000  // InstaIndex set UBIQUITY-A connector 13779456
-        // blockNumber: 13601000 // connector block deploy = 13600952 
-        // blockNumber: 13100000 // old block, old instaIndex, not using deployed connector 
+        // blockNumber: 13601000 // connector block deploy = 13600952
+        // blockNumber: 13100000 // old block, old instaIndex, not using deployed connector
       },
       accounts: [
         {
-          privateKey: process.env.PRIVATE_KEY_1 ? process.env.PRIVATE_KEY_1 : "",
+          privateKey: process.env.UBQ ? process.env.UBQ : "",
           balance: "1000000000000000000000"
         },
         {
-          privateKey: process.env.PRIVATE_KEY_2 ? process.env.PRIVATE_KEY_2 : "",
+          privateKey: process.env.UBQ ? process.env.UBQ : "",
           balance: "1000000000000000000000"
         }
       ]
