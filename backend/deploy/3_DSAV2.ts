@@ -13,7 +13,7 @@ const deployDsaV2: DeployFunction = async function ({ deployments, ethers, getNa
     (a: { event: string }) => a.event === "LogAccountCreated"
   );
   const dsaV2Address = event.args.account;
-  console.log("dsaV2", dsaV2Address, "for", tester);
+  console.log("dsaV2", dsaV2Address, "build for", tester);
 
   const tx2 = await (await deployer.sendTransaction({
     to: dsaV2Address, value: ethers.BigNumber.from(10).pow(18).mul(12)

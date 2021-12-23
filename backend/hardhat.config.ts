@@ -39,8 +39,9 @@ const config: HardhatUserConfig = {
       chainId: 1,
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-        blockNumber: 13800000  // InstaIndex set UBIQUITY-A connector 13779456
-        // blockNumber: 13601000 // connector block deploy = 13600952
+        blockNumber: 13860000  // > Ubiquity resolver deployed 13857047 
+        // blockNumber: 13800000  // > InstaIndex set UBIQUITY-A connector 13779456
+        // blockNumber: 13601000 // > connector block deploy = 13600952
         // blockNumber: 13100000 // old block, old instaIndex, not using deployed connector
       },
       accounts: [
