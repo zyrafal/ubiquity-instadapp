@@ -22,7 +22,7 @@ if (!process.env.ALCHEMY_API_KEY) {
   }
 }
 
-const accounts = [process.env.UBQ || "", process.env.UBQ || ""];
+const accounts = [process.env.UBQ || "", process.env.PRIVATE_KEY || ""];
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -49,7 +49,7 @@ const config: HardhatUserConfig = {
           balance: "1000000000000000000000"
         },
         {
-          privateKey: process.env.UBQ ? process.env.UBQ : "",
+          privateKey: process.env.PRIVATE_KEY ? process.env.PRIVATE_KEY : "",
           balance: "1000000000000000000000"
         }
       ]

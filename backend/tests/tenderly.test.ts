@@ -6,9 +6,9 @@ import type { Signer } from "ethers";
 const { ethers, network, getNamedAccounts } = hre;
 const { provider, getSigners, utils } = ethers;
 
+const networkName = network.name;
+
 describe("Tenderly fork", function () {
-  let networkName: string;
-  let chainId: number | undefined;
   let deployerSigner: Signer;
   let deployer: string;
   let tester: string;
@@ -20,10 +20,7 @@ describe("Tenderly fork", function () {
   };
 
   before(async () => {
-    const live = network.live;
-    networkName = network.name;
-    chainId = network.config.chainId;
-    console.log("network", networkName, chainId, live);
+    console.log("network", networkName, network.config.chainId, network.live);
 
     ({ deployer, tester, ethWhale } = await getNamedAccounts());
     // deployerSigner = provider.getSigner(deployer);
@@ -37,9 +34,10 @@ describe("Tenderly fork", function () {
   });
 
   describe("Tenderly fork", function () {
-    it("Should be OK", async function () { });
-
     if (networkName == "tenderly") {
+
+      it("Should be OK", async function () { });
+
       it("Should send ETH from deployer with ethersjs", async function () {
         const balance0 = await provider.getBalance(tester);
         const value = ethers.BigNumber.from(10).pow(14);
@@ -124,7 +122,7 @@ describe("Tenderly fork", function () {
         expect(balance1).to.be.equal(balance0.add(value));
       });
     } else {
-      console.log("Tenderly tests only on tenderly network", networkName);
+      console.log("Tenderly tests only available on Tenderly network, current:", networkName);
     }
   });
 });
