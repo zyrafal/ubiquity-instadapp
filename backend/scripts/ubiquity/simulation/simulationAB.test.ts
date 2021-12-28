@@ -29,6 +29,10 @@ const IBONDSHARE = [
   "function getBond(uint256 bondId) external view returns (tuple(address,uint256,uint256,uint256,uint256,uint256))",
   "function holderTokens(address) external view returns(uint256[])"
 ];
+const IERC1155 = [
+  "function balanceOf(address account, uint256 id) external view returns (uint256)",
+  "function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes calldata data) external"
+];
 const IERC20 = [
   "function balanceOf(address owner) view returns (uint256)",
   "function transfer(address to, uint amount) returns (boolean)",
@@ -74,7 +78,7 @@ const simulationInit = async (amount: BigNumberish, account: string, forkBlock: 
   lpContract = new ethers.Contract(UAD3CRVF, IERC20.concat(IUAD3CRF), provider);
   uadContract = new ethers.Contract(UAD, IERC20, provider);
   bondContract = new ethers.Contract(BOND, IBOND, provider);
-  bondShareContract = new ethers.Contract(BONDSHARE, IERC20.concat(IBONDSHARE), provider);
+  bondShareContract = new ethers.Contract(BONDSHARE, IERC1155.concat(IBONDSHARE), provider);
 
   // uadWhale add liquidity to get LP tokens
   await (await lpContract.connect(uadWhale).add_liquidity([one.mul(50000), 0], 0)).wait();

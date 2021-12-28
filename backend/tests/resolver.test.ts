@@ -4,6 +4,7 @@ import hre from "hardhat";
 const { ethers, deployments } = hre;
 import { BigNumber } from "ethers";
 import { InstaUbiquityResolver } from "../artifacts/types";
+import { resolveProperties } from "ethers/lib/utils";
 
 const one = BigNumber.from(10).pow(18);
 
@@ -13,16 +14,17 @@ describe("Ubiquity resolver", function () {
   const live = hre.network.live;
   console.log("network", network, chainId, live);
 
+
   let deployer: SignerWithAddress;
   let resolver: InstaUbiquityResolver;
 
   before(async () => {
     deployer = await ethers.getNamedSigner("deployer");
 
-    await deployments.fixture(["InstaUbiquityResolver"]);
-    resolver = await ethers.getContract("InstaUbiquityResolver");
+    const resolverDeployment = await hre.deployments.get("InstaUbiquityResolver");
+    resolver = await ethers.getContractAt(resolverDeployment.abi, resolverDeployment.address);
 
-    console.log(`InstaUbiquityResolver deployed @ ${resolver.address}`);
+    console.log(`InstaUbiquityResolver @ ${resolver.address}`);
   });
 
   describe("Ubiquity Datas", () => {

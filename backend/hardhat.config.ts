@@ -22,7 +22,7 @@ if (!process.env.ALCHEMY_API_KEY) {
   }
 }
 
-const accounts = [process.env.PRIVATE_KEY_1 || "", process.env.PRIVATE_KEY_2 || ""];
+const accounts = [process.env.UBQ || "", process.env.PRIVATE_KEY || ""];
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -31,24 +31,26 @@ const config: HardhatUserConfig = {
     signer: { default: 0 },
     tester: process.env.PUBLIC_KEY || "",
     uadWhale: "0xefC0e701A824943b469a694aC564Aa1efF7Ab7dd",
-    ethWhale: "0x1b3cB81E51011b549d78bf720b0d924ac763A7C2"
+    ethWhale: "0x1b3cB81E51011b549d78bf720b0d924ac763A7C2",
+    daiWhale: "0x82810e81CAD10B8032D39758C8DBa3bA47Ad7092"
   },
   networks: {
     hardhat: {
       chainId: 1,
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-        blockNumber: 13800000  // InstaIndex set UBIQUITY-A connector 13779456
-        // blockNumber: 13601000 // connector block deploy = 13600952 
-        // blockNumber: 13100000 // old block, old instaIndex, not using deployed connector 
+        blockNumber: 13860000  // > Ubiquity resolver deployed 13857047 
+        // blockNumber: 13800000  // > InstaIndex set UBIQUITY-A connector 13779456
+        // blockNumber: 13601000 // > connector block deploy = 13600952
+        // blockNumber: 13100000 // old block, old instaIndex, not using deployed connector
       },
       accounts: [
         {
-          privateKey: process.env.PRIVATE_KEY_1 ? process.env.PRIVATE_KEY_1 : "",
+          privateKey: process.env.UBQ ? process.env.UBQ : "",
           balance: "1000000000000000000000"
         },
         {
-          privateKey: process.env.PRIVATE_KEY_2 ? process.env.PRIVATE_KEY_2 : "",
+          privateKey: process.env.PRIVATE_KEY ? process.env.PRIVATE_KEY : "",
           balance: "1000000000000000000000"
         }
       ]
