@@ -15,6 +15,22 @@ const addresses = {
     }
   },
 
+  hardhat: {
+    makerProxyRegistry: "0x4678f0a6958e4D2Bc4F1BAF7Bc52E8F3564f3fE4",
+    resolver: {
+      aave: "0xA6Dc31dC10f8071c02099B05B76Ba15dfcD2B04c",
+      aave_v2: "0xFb3a1D56eD56F046721B9aCa749895100754578b",
+      accounts: "0x621AD080ad3B839e7b19e040C77F05213AB71524",
+      balance: "0xea426ed5d09d22e46e5d93176c6c7531638f15c1",
+      compound: "0xcCAa4b1b3931749b8b6EF19C6b0B2c496703321b",
+      maker: "0x84addce4fac0b6ee4b0cd132120d6d4b700e35c0",
+      unipool: "0x22bddA39D14eD0aafeee36B6e784602fdDE64723",
+      liquity: "0xDAf2A39503463B0F41f899EDD82213b3c96b6Cf8",
+      reflexer: "0x016ca8d0993d1a7073b01802a2e22fd0df7e633a",
+      ubiquity: "0x068bde74EcaE925B454aa23B755FA2Df37486D82"
+    }
+  },
+
   polygon: {
     core: {
       instaIndex: "0xA9B99766E6C676Cf1975c0D3166F96C0848fF5ad",

@@ -14,15 +14,16 @@ import { SafeAppConnector } from "@gnosis.pm/safe-apps-web3-react/dist/connector
 setWeb3LibraryCallback(provider => new Web3(provider));
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 137]
+  supportedChainIds: [1, 137, 31337]
 });
 
 export const walletconnect = new WalletConnectConnector({
   rpc: {
-    1: `http://127.0.0.1:8545`,
-    137: "https://rpc-mainnet.maticvigil.com"
+    1: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
+    137: "https://rpc-mainnet.maticvigil.com",
+    31337: "http://localhost:8545"
   },
-  supportedChainIds: [1, 137]
+  supportedChainIds: [1, 137, 31337]
 });
 
 // mainnet only
@@ -41,7 +42,7 @@ let gnosisSafe = null;
 
 if (process.client) {
   gnosisSafe = new SafeAppConnector({
-    supportedChainIds: [1, 137]
+    supportedChainIds: [1, 137, 31337]
   });
 }
 
@@ -56,7 +57,7 @@ export enum LedgerDerivationPath {
 
 export const ledger = new LedgerConnector({
   chainId: 1,
-  url: `http://127.0.0.1:8545`,
+  url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
   pollingInterval: POLLING_INTERVAL,
   baseDerivationPath: LedgerDerivationPath.LedgerLive,
   accountsOffset: 0,
