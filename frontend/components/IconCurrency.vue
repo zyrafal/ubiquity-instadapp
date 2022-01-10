@@ -19,6 +19,7 @@
     <SVGcomp v-else-if="currency === 'comp'" class="h-full" />
     <SVGcrep v-else-if="currency === 'crep'" class="h-full" />
     <SVGcrv v-else-if="currency === 'crv'" class="h-full" />
+    <SVGcrv3 v-else-if="currency === 'crv3'" class="h-full" />
     <SVGcsai v-else-if="currency === 'csai'" class="h-full" />
     <SVGcusdc v-else-if="currency === 'cusdc'" class="h-full" />
     <SVGcusdt v-else-if="currency === 'cusdt'" class="h-full" />
@@ -102,6 +103,7 @@ import SVGceth from '@/assets/icons/currencies/ceth.svg?inline'
 import SVGcomp from '@/assets/icons/currencies/comp.svg?inline'
 import SVGcrep from '@/assets/icons/currencies/crep.svg?inline'
 import SVGcrv from '@/assets/icons/currencies/crv.svg?inline'
+import SVGcrv3 from '@/assets/icons/currencies/crv3.svg?inline'
 import SVGcsai from '@/assets/icons/currencies/csai.svg?inline'
 import SVGcusdc from '@/assets/icons/currencies/cusdc.svg?inline'
 import SVGcusdt from '@/assets/icons/currencies/cusdt.svg?inline'
@@ -181,6 +183,7 @@ export default defineComponent({
     SVGcomp,
     SVGcrep,
     SVGcrv,
+    SVGcrv3,
     SVGcsai,
     SVGcusdc,
     SVGcusdt,

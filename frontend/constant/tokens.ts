@@ -47,6 +47,7 @@ export default {
     { key: 'stkaave', type: 'token', symbol: 'stkAAVE', name: 'Staked Aave', address: '0x4da27a545c0c5B758a6BA100e3a049001de870f5', decimals: 18, isStableCoin: false, },
     { key: 'matic', type: 'token', symbol: 'MATIC', name: 'Matic Token', address: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0', decimals: 18, isStableCoin: false, },
     { key: 'lqty', type: 'token', symbol: 'LQTY', name: 'LQTY', address: '0x6DEA81C8171D0bA574754EF6F8b412F2Ed88c54D', decimals: 18, isStableCoin: false},
+    { key: 'uadcrv3', type: 'token', symbol: 'UAD3CRV-LP', name: 'UAD3CRV-LP', address: '0x20955CB69Ae1515962177D164dfC9522feef567E', decimals: 18, isStableCoin: false},
   ]),
 
   polygon: createTokenUtils([

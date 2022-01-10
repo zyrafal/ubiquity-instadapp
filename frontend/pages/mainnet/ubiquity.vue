@@ -24,7 +24,7 @@
         </div>
         <h1 class="ml-4 text-primary-black text-2xl font-semibold">Ubiquity DAO</h1>
       </div>
-<!-- 
+
       <ButtonCTAOutlined
         class="px-4 h-9 w-[173px]"
         @click="$router.push({ hash: 'strategies?protocol=ubiquity' })"
@@ -46,7 +46,7 @@
             fill="#1874FF"
           />
         </svg>
-      </ButtonCTAOutlined> -->
+      </ButtonCTAOutlined>
     </div>
 
     <div class="mt-10">
@@ -60,9 +60,9 @@
             <h4 class="text-xl text-primary-black font-semibold">
               Stabilize Liquity Protocol
             </h4>
-            <a class="mt-4 text-[#1874FF] text-right font-medium cursor-pointer">
+            <!-- <a class="mt-4 text-[#1874FF] text-right font-medium cursor-pointer">
               - Learn More -
-            </a>
+            </a> -->
           </div>
           <div class="flex items-center justify-center rounded-r-lg bg-[#1874FF] w-[50px]">
             <SVGScale class="h-12 text-white" />
@@ -73,9 +73,9 @@
             <h4 class="text-xl text-primary-black font-semibold">
               Get Passive Yield on Your LUSD
             </h4>
-            <a class="mt-4 text-[#1874FF] text-right font-medium cursor-pointer">
+            <!-- <a class="mt-4 text-[#1874FF] text-right font-medium cursor-pointer">
               - Learn More -
-            </a>
+            </a> -->
           </div>
           <div class="flex items-center justify-center rounded-r-lg bg-[#1874FF] w-[50px]">
             <SVGWaterDrop class="h-12 text-white" />
@@ -86,9 +86,9 @@
             <h4 class="text-xl text-primary-black font-semibold">
               Improved Liquidity Mining Program
             </h4>
-            <a class="mt-4 text-[#1874FF] text-right font-medium cursor-pointer">
+            <!-- <a class="mt-4 text-[#1874FF] text-right font-medium cursor-pointer">
               - Learn More -
-            </a>
+            </a> -->
           </div>
           <div class="flex items-center justify-center rounded-r-lg bg-[#1874FF] w-[50px]">
             <SVGSavingMoney class="h-12 text-white" />
@@ -187,12 +187,12 @@
             style="box-shadow: -1px -3px 10px rgba(12, 25, 91, 0.03), 2px 4px 12px rgba(12, 25, 91, 0.05)"
           >
             <div class="flex items-center">
-              <IconCurrency currency="crv" class="w-12 h-12" no-height />
+              <IconCurrency currency="crv3" class="w-12 h-12" no-height />
               <div class="flex flex-col flex-grow mx-4">
-                <div class="mb-1 font-medium leading-none whitespace-no-wrap text-19">{{ formatUsd(3612.017) }}</div>
+                <div class="mb-1 font-medium leading-none whitespace-no-wrap text-19">{{ formatNumber18usd(datas.uadcrv3TotalSupply) }}</div>
                 <div class="flex leading-none whitespace-no-wrap">
-                  <span class="text-grey-pure text-14">{{ formatDecimal(4.2) }} UAD3CRV-LP</span>
-                  <Info :text="`${formatUsd(200, 2)}/UAD3CRV-LP`" icon="price" class="ml-1" />
+                  <span class="text-grey-pure text-14">{{ formatDecimal(4.2) }} {{ symbol }}</span>
+                  <Info :text="`${formatUsd(200, 2)}/${symbol}`" icon="price" class="ml-1" />
                 </div>
               </div>
               <div class="self-start">
@@ -201,10 +201,10 @@
             </div>
 
             <div class="block md:flex items-center justify-between px-0 mt-6">
-              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover">Ape in</button>
-              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" >Withdraw</button>
-              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" >Stake</button>
-              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" >Unstake</button>
+              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" @click="showApeIn">Ape in</button>
+              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" @click="showWithdraw">Withdraw</button>
+              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" @click="showStake">Stake</button>
+              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" @click="showUnstake">Unstake</button>
             </div>
 
             <hr class="mt-4" />
@@ -226,6 +226,8 @@ import { useFormatting } from "~/composables/useFormatting";
 import { useSearchFilter } from "~/composables/useSearchFilter";
 import { useStatus } from "~/composables/useStatus";
 import { useBigNumber } from "~/composables/useBigNumber";
+import { useNotification } from "~/composables/useNotification";
+import { useToken } from '~/composables/useToken'
 
 import SVGBalance from "@/assets/img/icons/balance.svg?inline";
 import SVGPrice from "@/assets/img/icons/price.svg?inline";
@@ -263,6 +265,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const { isZero, ensureValue, times, div, max, gt, toBN } = useBigNumber();
+    const { getTokenByKey } = useToken()
 
     const {
       formatUsd,
@@ -273,7 +276,15 @@ export default defineComponent({
       shortenHash
     } = useFormatting();
 
+    const { showWarning } = useNotification();
+
     const { addresses, datas, inventory } = useUbiquityPosition();
+    console.log('===================================')
+    console.log(addresses, datas, inventory)
+    console.log('===================================')
+
+    const tokenKey = 'uadcrv3';
+    const symbol = computed(() => getTokenByKey(tokenKey)?.symbol || tokenKey)
 
     const position = true;
 
@@ -283,16 +294,37 @@ export default defineComponent({
           .dividedBy(1e18)
           .toFixed()
       );
+
     const formatNumber18usd = value => formatUsd(formatNumber18(value));
 
     function openSupply() {
       router.push({ hash: "usupply" });
     }
+
+    function showApeIn() {
+      router.push({ hash: "uad3crvsupply" });
+      // showWarning("UbiquityDAO", "No UAD3CRV supplied!!");
+    }
+
+    function showWithdraw() {
+      showWarning("UbiquityDAO", "No UAD3CRV supplied!!");
+    }
+
+    function showStake() {
+      router.push({ hash: "uad3crvstake" });
+      // showWarning("UbiquityDAO", "No UAD3CRV supplied!!");
+    }
+
+    function showUnstake() {
+      showWarning("UbiquityDAO", "No UAD3CRV supplied!!");
+    }
+
     return {
       position,
       addresses,
       datas,
       inventory,
+      symbol,
       formatUsd,
       formatNumber,
       formatNumber18,
@@ -301,7 +333,11 @@ export default defineComponent({
       formatPercent,
       formatDecimal,
       shortenHash,
-      openSupply
+      openSupply,
+      showApeIn,
+      showWithdraw,
+      showStake,
+      showUnstake
     };
   }
 });

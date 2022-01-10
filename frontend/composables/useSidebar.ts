@@ -45,6 +45,8 @@ import SidebarStrategySelection from "~/components/sidebar/context/strategy/Side
 import SidebarStrategy from "~/components/sidebar/context/strategy/SidebarStrategy.vue";
 
 import SidebarUbiquitySupply from "~/components/sidebar/context/ubiquity/SidebarUbiquitySupply.vue";
+import SidebarUad3CrvSupply from "~/components/sidebar/context/ubiquity/SidebarUad3CrvSupply.vue";
+import SidebarUad3CrvStake from "~/components/sidebar/context/ubiquity/SidebarUad3CrvStake.vue";
 
 const sidebars = {
   "#overview": { component: SidebarOverview, back: false, close: true },
@@ -89,7 +91,9 @@ const sidebars = {
   "/mainnet/reflexer#payback": { component: SidebarReflexerPayback },
 
   "/mainnet/ubiquity": { component: null },
-  "/mainnet/ubiquity#usupply": { component: SidebarUbiquitySupply }
+  "/mainnet/ubiquity#usupply": { component: SidebarUbiquitySupply },
+  "/mainnet/ubiquity#uad3crvsupply": { component: SidebarUad3CrvSupply },
+  "/mainnet/ubiquity#uad3crvstake": { component: SidebarUad3CrvStake }
 };
 
 const sidebar = ref(null);
