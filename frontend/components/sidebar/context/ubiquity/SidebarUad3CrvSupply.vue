@@ -10,45 +10,78 @@
         </ul>
       </div>
     </template>
-
+<!-- 
     <SidebarSectionValueWithIcon label="Token Balance" center>
       <template #icon
         ><IconCurrency currency="crv3" class="w-20 h-20" noHeight
       /></template>
       <template #value>{{ formatDecimal(balance) }} {{ symbol }}</template>
-    </SidebarSectionValueWithIcon>
+    </SidebarSectionValueWithIcon> -->
 
     <div class="bg-[#C5CCE1] bg-opacity-[0.15] mt-10 p-8">
       <h3 class="text-primary-gray text-xs font-semibold mb-2.5">
-        Amount to supply
+        TOKEN TO ZAP
       </h3>
 
+      <input-amount
+        :value="amount"
+        :token-key="'dai'"
+        :token-keys="['dai', 'usdt', 'usdc']"
+        :error="null"
+        placeholder="0 DAI"
+        @input="$event => {}"
+        @tokenKeyChanged="
+          tokenKey => {
+          }
+        "
+      />
+
+      <h3 class="text-primary-gray text-xs font-semibold mb-2.5">
+        LOCKUP TIME IN WEEKS
+      </h3>
       <input-numeric
         v-model="amount"
-        placeholder="Amount to supply"
+        placeholder="1 - 208 weeks"
         :error="errors.amount.message"
       >
         <template v-if="!isMaxAmount" #suffix>
           <div class="absolute mt-2 top-0 right-0 mr-4">
-            <button
+            <!-- <button
               type="button"
               class="text-primary-blue-dark font-semibold text-sm hover:text-primary-blue-hover"
               @click="toggle"
             >
               Max
-            </button>
+            </button> -->
           </div>
         </template>
       </input-numeric>
 
+      <h3 class="text-primary-gray text-xs font-semibold mb-2.5 mt-8">
+        ESTIMATED LP VALUE
+      </h3>
+      <div class="flex items-center">
+        <IconCurrency currency="crv3" class="w-12 h-12" no-height />
+        <div class="flex flex-col flex-grow mx-2">
+          <div class="mb-1 font-medium leading-none whitespace-no-wrap text-18">{{ uadcrv3.usd }}</div>
+          <div class="flex leading-none whitespace-no-wrap">
+            <span class="text-grey-pure text-12 leading-[17px]">{{ uadcrv3.lp }}</span>
+            <Info :text="uadcrv3.info" icon="price" class="ml-1" />
+          </div>
+        </div>
+      </div>
+
+      <ValidationErrors :error-messages="errorMessages" class="mb-6" />
       <div class="flex flex-shrink-0 mt-10">
         <!-- :disabled="!isValid || pending" -->
         <ButtonCTA class="w-full" :loading="pending" @click="cast">
           APE IN
         </ButtonCTA>
       </div>
+      <h3 class="text-primary-gray text-xs mt-2.5 text-center">
+        Instadapp does not charge a fee for this operation
+      </h3>
 
-      <ValidationErrors :error-messages="errorMessages" class="mt-6" />
     </div>
   </SidebarContextRootContainer>
 </template>
@@ -56,6 +89,7 @@
 <script>
 import { computed, defineComponent, ref } from "@nuxtjs/composition-api";
 import InputNumeric from "~/components/common/input/InputNumeric.vue";
+import InputAmount from "~/components/common/input/InputAmount.vue";
 import { useBalances } from "~/composables/useBalances";
 import { useNotification } from "~/composables/useNotification";
 import { useBigNumber } from "~/composables/useBigNumber";
@@ -75,14 +109,14 @@ import { useSidebar } from "~/composables/useSidebar";
 import { useUbiquityPosition } from "~/composables/protocols/useUbiquityPosition";
 
 export default defineComponent({
-  components: { InputNumeric, ToggleButton, ButtonCTA, Button },
+  components: { InputNumeric, InputAmount, ToggleButton, ButtonCTA, Button },
   setup() {
     const { close } = useSidebar();
     const { account } = useWeb3();
     const { dsa } = useDSA();
     const { valInt, getTokenByKey } = useToken();
     const { getBalanceByKey, fetchBalances } = useBalances();
-    const { formatDecimal } = useFormatting();
+    const { formatDecimal, formatUsd, formatNumber } = useFormatting();
     const { isZero } = useBigNumber();
     const { parseSafeFloat } = useParsing();
     const {
@@ -94,7 +128,7 @@ export default defineComponent({
     const amount = ref("");
     const amountParsed = computed(() => parseSafeFloat(amount.value));
 
-    const { fetchPosition } = useUbiquityPosition();
+    const { fetchPosition, datas } = useUbiquityPosition();
 
     const tokenKey = ref("uadcrv3");
     const balance = computed(() => getBalanceByKey(tokenKey.value));
@@ -104,7 +138,25 @@ export default defineComponent({
 
     const { toggle, isMaxAmount } = useMaxAmountActive(amount, balance);
 
+    const formatNumber18 = value =>
+      formatNumber(
+        ensureValue(value)
+          .dividedBy(1e18)
+          .toFixed()
+      );
+
+    const formatNumber18usd = value => formatUsd(formatNumber18(value));
+
     const { validateAmount, validateIsLoggedIn } = useValidators();
+
+    const uadcrv3 = computed(() => {
+      return {
+        usd: '$156,029',
+        lp: `4.20 UAD3CRV-LP`,
+        info: `$200.00/UAD3CRV-LP`
+      }
+    })
+
     const errors = computed(() => {
       const hasAmountValue = !isZero(amount.value);
 
@@ -164,8 +216,12 @@ export default defineComponent({
       tokenKey,
       symbol,
       balance,
+      datas,
       amount,
+      uadcrv3,
       formatDecimal,
+      formatUsd,
+      formatNumber18usd,
       errors,
       errorMessages,
       isMaxAmount,

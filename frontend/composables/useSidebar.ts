@@ -55,7 +55,7 @@ import SidebarUniverseWithdraw from "~/components/sidebar/context/universe/Sideb
 
 import SidebarUbiquitySupply from "~/components/sidebar/context/ubiquity/SidebarUbiquitySupply.vue";
 import SidebarUad3CrvSupply from "~/components/sidebar/context/ubiquity/SidebarUad3CrvSupply.vue";
-import SidebarUad3CrvStake from "~/components/sidebar/context/ubiquity/SidebarUad3CrvStake.vue";
+import SidebarUad3CrvWidthdraw from "~/components/sidebar/context/ubiquity/SidebarUad3CrvWidthdraw.vue";
 
 import SidebarStrategySelection from "~/components/sidebar/context/strategy/SidebarStrategySelection.vue";
 import SidebarStrategy from "~/components/sidebar/context/strategy/SidebarStrategy.vue";
@@ -118,7 +118,7 @@ const sidebars = {
   "/mainnet/ubiquity": { component: null },
   "/mainnet/ubiquity#usupply": { component: SidebarUbiquitySupply },
   "/mainnet/ubiquity#uad3crvsupply": { component: SidebarUad3CrvSupply },
-  "/mainnet/ubiquity#uad3crvstake": { component: SidebarUad3CrvStake }
+  "/mainnet/ubiquity#uad3crvwithdraw": { component: SidebarUad3CrvWidthdraw }
 };
 
 const sidebar = ref(null);

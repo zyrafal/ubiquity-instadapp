@@ -24,7 +24,7 @@
         </div>
         <h1 class="ml-4 text-primary-black text-2xl font-semibold">Ubiquity DAO</h1>
       </div>
-
+<!-- 
       <ButtonCTAOutlined
         class="px-4 h-9 w-[173px]"
         @click="$router.push({ hash: 'strategies?protocol=ubiquity' })"
@@ -46,7 +46,7 @@
             fill="#1874FF"
           />
         </svg>
-      </ButtonCTAOutlined>
+      </ButtonCTAOutlined> -->
     </div>
 
     <div class="mt-10">
@@ -201,10 +201,10 @@
             </div>
 
             <div class="block md:flex items-center justify-between px-0 mt-6">
-              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" @click="showApeIn">Ape in</button>
-              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" @click="showWithdraw">Withdraw</button>
-              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" @click="showStake">Stake</button>
-              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" @click="showUnstake">Unstake</button>
+              <button class="h-10 md:w-[49%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" @click="showApeIn">Ape in</button>
+              <button class="h-10 md:w-[49%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" @click="showWithdraw">Withdraw</button>
+              <!-- <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" @click="showStake">Stake</button>
+              <button class="h-10 md:w-[24%] mt-2 md:mt-0 uppercase w-full text-primary-blue-dark shadow border border-primary-blue-dark hover:border-primary-blue-hover rounded-[4px] hover:text-primary-blue-hover" color="ocean-blue" @click="showUnstake">Unstake</button> -->
             </div>
 
             <hr class="mt-4" />
@@ -307,17 +307,18 @@ export default defineComponent({
     }
 
     function showWithdraw() {
-      showWarning("UbiquityDAO", "No UAD3CRV supplied!!");
-    }
-
-    function showStake() {
-      router.push({ hash: "uad3crvstake" });
       // showWarning("UbiquityDAO", "No UAD3CRV supplied!!");
+      router.push({ hash: "uad3crvwithdraw" });
     }
 
-    function showUnstake() {
-      showWarning("UbiquityDAO", "No UAD3CRV supplied!!");
-    }
+    // function showStake() {
+    //   router.push({ hash: "uad3crvstake" });
+    //   // showWarning("UbiquityDAO", "No UAD3CRV supplied!!");
+    // }
+
+    // function showUnstake() {
+    //   showWarning("UbiquityDAO", "No UAD3CRV supplied!!");
+    // }
 
     return {
       position,
@@ -336,8 +337,8 @@ export default defineComponent({
       openSupply,
       showApeIn,
       showWithdraw,
-      showStake,
-      showUnstake
+      // showStake,
+      // showUnstake
     };
   }
 });
