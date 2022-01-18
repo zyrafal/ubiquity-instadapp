@@ -1,6 +1,12 @@
 import { ref } from "@nuxtjs/composition-api";
 import { useFormatting } from "@/composables/useFormatting";
-import { getEtherscanLink, getMaticLink, getTenderlyLink } from "./useLink";
+import {
+  getAvalancheLink,
+  getArbitrumLink,
+  getEtherscanLink,
+  getMaticLink,
+  getTenderlyLink
+} from "./useLink";
 import { useRandom } from "./useRandom";
 import { Network, activeNetworkId } from "./useNetwork";
 const { makeid } = useRandom();
@@ -92,6 +98,10 @@ export function useNotification() {
     let href;
     if (network === Network.Polygon) {
       href = getMaticLink(transactionHash);
+    }else if (network === Network.Arbitrum) {
+      href = getArbitrumLink(transactionHash);
+    }else if (network === Network.Avalanche) {
+      href = getAvalancheLink(transactionHash);
     } else {
       href = getEtherscanLink(transactionHash);
     }
@@ -113,6 +123,10 @@ export function useNotification() {
     let href;
     if (network === Network.Polygon) {
       href = getMaticLink(transactionHash);
+    } else if (network === Network.Arbitrum) {
+      href = getArbitrumLink(transactionHash);
+    } else if (network === Network.Avalanche) {
+      href = getAvalancheLink(transactionHash);
     } else {
       href = getEtherscanLink(transactionHash);
     }

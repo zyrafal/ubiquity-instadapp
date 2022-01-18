@@ -21,9 +21,10 @@
         </div>
 
         <h2 class="mt-4 font-semibold text-19">{{ app.name }}</h2>
-        <p class="mt-2 text-14 font-regular text-grey-dark opacity-90">
-          {{ app.description }}
-        </p>
+        <p
+          class="mt-2 text-14 font-regular text-grey-dark opacity-90"
+          v-html="app.description"
+        ></p>
       </nuxt-link>
     </div>
   </div>
@@ -37,7 +38,10 @@ import CompoundIcon from "~/assets/icons/compound.svg?inline";
 import MakerIcon from "~/assets/icons/makerdao.svg?inline";
 import OneInchIcon from "~/assets/icons/1inch.svg?inline";
 import LiquityIcon from "~/assets/icons/liquity.svg?inline";
+import BprotocolIcon from "~/assets/icons/b-protocol.svg?inline";
 import ReflexerIcon from "~/assets/icons/reflexer.svg?inline";
+import YearnIcon from "~/assets/icons/yearn.svg?inline";
+import UniverseIcon from "~/assets/icons/universe.svg?inline";
 import UbiquityIcon from "~/assets/icons/ubiquity.svg?inline";
 
 const appsPerNetwork = {
@@ -78,6 +82,13 @@ const appsPerNetwork = {
       description: "Collateralized LUSD Debt"
     },
     {
+      id: "bprotocol",
+      icon: BprotocolIcon,
+      name: "B.Protocol v2",
+      url: "/mainnet/bprotocol",
+      description: "Automated Rebalancing <br/>for Liquity Stability Pool"
+    },
+    {
       id: "reflexer",
       icon: ReflexerIcon,
       name: "Reflexer Finance",
@@ -85,11 +96,25 @@ const appsPerNetwork = {
       description: "Collateralized RAI Debt"
     },
     {
+      id: "yearn-v2",
+      icon: YearnIcon,
+      name: "Yearn",
+      url: "/mainnet/yearn-v2",
+      description: "Automated Yield Strategies"
+    },
+    {
       id: "ubiquity",
       icon: UbiquityIcon,
       name: "Ubiquity DAO",
       url: "/mainnet/ubiquity",
       description: "Algorithmic Dollar"
+    },
+    {
+      id: "universe",
+      icon: UniverseIcon,
+      name: "Universe",
+      url: "/mainnet/universe",
+      description: "Maximizing your Uniswap V3 Return"
     }
   ],
   polygon: [
@@ -107,6 +132,24 @@ const appsPerNetwork = {
       url: "/1inch",
       description: "DEX Aggregator"
     }
+  ],
+  arbitrum: [
+    {
+      id: "1inch",
+      icon: OneInchIcon,
+      name: "1inch",
+      url: "/1inch",
+      description: "DEX Aggregator"
+    }
+  ],
+  avalanche: [
+    {
+      id: "aave-v2",
+      icon: AaveIcon,
+      name: "Aave v2",
+      url: "/aave-v2",
+      description: "Lend and borrow straight from your Gnosis Safe"
+    }
   ]
 };
 
@@ -115,7 +158,6 @@ export default defineComponent({
     const { activeNetworkId } = useNetwork();
 
     const apps = computed(() => appsPerNetwork[activeNetworkId.value]);
-
     return {
       apps
     };

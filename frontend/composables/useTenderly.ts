@@ -9,9 +9,10 @@ const forkId = ref(null);
 export function useTenderly() {
   const { $config } = useContext();
   const { activate, deactivate, connector, library } = useWeb3();
+  const { activeNetworkId } = useNetwork();
   const { accounts, refreshAccounts } = useDSA();
   const canSimulate = computed(
-    () => $config.TENDERLY_FORK_PATH && $config.TENDERLY_KEY
+    () => activeNetworkId.value !== "arbitrum" && $config.TENDERLY_FORK_PATH && $config.TENDERLY_KEY
   );
   const loading = ref(false);
 
@@ -33,16 +34,15 @@ export function useTenderly() {
         url: `https://api.tenderly.co/api/v1/account/${$config.TENDERLY_FORK_PATH}/fork`,
         headers: {
           "X-Access-key": $config.TENDERLY_KEY,
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
         data: JSON.stringify({
-          network_id: activeNetwork.value.chainId.toString(),
-        }),
+          network_id: activeNetwork.value.chainId.toString()
+        })
       });
-      const data_ = data as any;
 
-      await setForkId(data_?.simulation_fork?.id);
-      if (data_?.simulation_fork?.id) {
+      await setForkId(data?.simulation_fork?.id);
+      if (data?.simulation_fork?.id) {
         await addBalance();
         await refreshAccounts();
       }
@@ -62,8 +62,8 @@ export function useTenderly() {
           url: `https://api.tenderly.co/api/v1/account/${$config.TENDERLY_FORK_PATH}/fork/${forkId.value}`,
           headers: {
             "X-Access-key": $config.TENDERLY_KEY,
-            "Content-Type": "application/json",
-          },
+            "Content-Type": "application/json"
+          }
         });
       }
     } catch (error) {}
@@ -102,11 +102,11 @@ export function useTenderly() {
       url: `https://api.tenderly.co/api/v1/account/${$config.TENDERLY_FORK_PATH}/fork/${forkId.value}/balance`,
       headers: {
         "X-Access-key": $config.TENDERLY_KEY,
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
       data: JSON.stringify({
-        accounts: accounts.value.map((a) => a.address),
-      }),
+        accounts: accounts.value.map(a => a.address)
+      })
     });
   };
 
@@ -115,6 +115,6 @@ export function useTenderly() {
     canSimulate,
     startSimulation,
     stopSimulation,
-    loading,
+    loading
   };
 }

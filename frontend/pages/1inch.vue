@@ -13,34 +13,11 @@
     <div class="mt-10 flex items-center">
       <div class="flex items-center">
         <div
-          style="
-            background: radial-gradient(
-                42.15% 42.15% at 48.94% 48.94%,
-                #d6dae0 75.67%,
-                #f0f3f9 100%
-              ),
-              #c4c4c4;
-          "
-          class="
-            w-16
-            h-16
-            rounded-full
-            flex
-            items-center
-            justify-center
-            border border-[#CCDCF3]
-          "
+          style="background: radial-gradient(42.15% 42.15% at 48.94% 48.94%, #D6DAE0 75.67%, #F0F3F9 100%), #C4C4C4;"
+          class="w-16 h-16 rounded-full flex items-center justify-center border border-[#CCDCF3]"
         >
           <div
-            class="
-              w-12
-              h-12
-              rounded-full
-              flex
-              items-center
-              justify-center
-              bg-[#1874FF]
-            "
+            class="w-12 h-12 rounded-full flex items-center justify-center bg-[#1874FF]"
           >
             <OneInchIcon Icon class="w-8 h-8 text-white" />
           </div>
@@ -67,7 +44,7 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
-  watch,
+  watch
 } from "@nuxtjs/composition-api";
 import BackIcon from "~/assets/icons/back.svg?inline";
 import OneInchIcon from "~/assets/icons/1inch.svg?inline";
@@ -87,7 +64,7 @@ export default defineComponent({
   components: {
     BackIcon,
     OneInchIcon,
-    SwapCard,
+    SwapCard
   },
   setup() {
     const { toBN, pow, div } = useBigNumber();
@@ -96,8 +73,7 @@ export default defineComponent({
     const { getSellSpell } = use1InchSwap();
     const { account } = useWeb3();
     const { fetchBalances } = useBalances();
-    const { showPendingTransaction, showConfirmedTransaction, showWarning } =
-      useNotification();
+    const { showPendingTransaction, showConfirmedTransaction, showWarning } = useNotification();
     const { valInt } = useToken();
     const sellToken = ref();
     const buyToken = ref();
@@ -114,7 +90,7 @@ export default defineComponent({
     }
 
     const swap = async () => {
-      const result = (await fetchSwapData()) as any;
+      const result = await fetchSwapData();
 
       const spells = dsa.value.Spell();
 
@@ -125,7 +101,7 @@ export default defineComponent({
           sellAmt: valInt(sellToken.value.amount, sellToken.value.decimals),
           unitAmt: caculateUnitAmt(),
           calldata: result.tx.data,
-          setId: 0,
+          setId: 0
         })
       );
 
@@ -133,11 +109,11 @@ export default defineComponent({
         const txHash = await dsa.value.cast({
           spells,
           from: account.value,
-          onReceipt: async (receipt) => {
+          onReceipt: async receipt => {
             showConfirmedTransaction(receipt.transactionHash);
 
             await fetchBalances(true);
-          },
+          }
         });
 
         showPendingTransaction(txHash);
@@ -160,13 +136,12 @@ export default defineComponent({
           params: {
             fromTokenAddress: sellToken.value.address,
             toTokenAddress: buyToken.value.address,
-            amount: valInt(sellToken.value.amount, sellToken.value.decimals),
-          },
+            amount: valInt(sellToken.value.amount, sellToken.value.decimals)
+          }
         }
       );
-      const data_ = data as any;
 
-      const num = toBN(data_.toTokenAmount);
+      const num = toBN(data.toTokenAmount);
       const multiplier = pow(10, buyToken.value.decimals);
 
       buyToken.value.amount = div(num, multiplier).toFixed(7);
@@ -189,8 +164,8 @@ export default defineComponent({
             amount: valInt(sellToken.value.amount, sellToken.value.decimals),
             fromAddress: dsa.value.instance.address.toLowerCase(),
             slippage: slippage.value,
-            disableEstimate: true,
-          },
+            disableEstimate: true
+          }
         }
       );
 
@@ -214,8 +189,8 @@ export default defineComponent({
       swap,
       slippage,
       sellToken,
-      buyToken,
+      buyToken
     };
-  },
+  }
 });
 </script>

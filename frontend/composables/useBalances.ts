@@ -22,24 +22,30 @@ import { useSorting } from "./useSorting";
 const balances = reactive({
   user: {
     mainnet: {},
-    polygon: {}
+    polygon: {},
+    arbitrum: {},
+    avalanche: {}
   },
   dsa: {
     mainnet: {},
-    polygon: {}
+    polygon: {},
+    arbitrum: {},
+    avalanche: {}
   }
 });
 
 const prices = reactive({
   mainnet: {},
-  polygon: {}
+  polygon: {},
+  arbitrum: {},
+  avalanche: {}
 });
 
 export function useBalances() {
   const { $axios } = useContext();
   const { times, plus, ensureValue } = useBigNumber();
   const { account, library } = useWeb3();
-  const { activeNetworkId } = useNetwork()
+  const { activeNetworkId } = useNetwork();
   const { activeAccount } = useDSA();
   const { getTokenByKey } = useToken();
   const { by } = useSorting();
@@ -48,6 +54,12 @@ export function useBalances() {
     prices.mainnet = await $axios.$get("https://api.instadapp.io/defi/prices");
     prices.polygon = await $axios.$get(
       "https://api.instadapp.io/defi/polygon/prices"
+    );
+    prices.arbitrum = await $axios.$get(
+      "https://api.instadapp.io/defi/arbitrum/prices"
+    );
+    prices.avalanche = await $axios.$get(
+      "https://api.instadapp.io/defi/avalanche/prices"
     );
   });
   const fetchBalances = async (refresh = false) => {
@@ -61,6 +73,14 @@ export function useBalances() {
         polygon:
           activeNetworkId.value === Network.Polygon
             ? await getBalances(account.value, Network.Polygon, library.value)
+            : {},
+        arbitrum:
+          activeNetworkId.value === Network.Arbitrum
+            ? await getBalances(account.value, Network.Arbitrum, library.value)
+            : {},
+        avalanche:
+          activeNetworkId.value === Network.Avalanche
+            ? await getBalances(account.value, Network.Avalanche, library.value)
             : {}
       };
     }
@@ -84,6 +104,18 @@ export function useBalances() {
                 Network.Polygon,
                 library.value
               )
+            : {},
+        arbitrum:
+          activeNetworkId.value === Network.Arbitrum
+            ? await getBalances(
+                activeAccount.value.address,
+                Network.Arbitrum,
+                library.value
+              )
+            : {},
+        avalanche:
+          activeNetworkId.value === Network.Avalanche
+            ? await getBalances(account.value, Network.Avalanche, library.value)
             : {}
       };
     }
@@ -95,7 +127,8 @@ export function useBalances() {
 
   const getBalanceByAddress = (address, network = null, type = "dsa") => {
     return (
-      balances[type]?.[network || activeNetworkId.value][address]?.balance || "0"
+      balances[type]?.[network || activeNetworkId.value][address]?.balance ||
+      "0"
     );
   };
 
@@ -126,7 +159,11 @@ export function useBalances() {
     return tokens[activeNetworkId.value].allTokens
       .map(token => ({
         ...token,
-        balance: getBalanceByAddress(token.address, activeNetworkId.value, type),
+        balance: getBalanceByAddress(
+          token.address,
+          activeNetworkId.value,
+          type
+        ),
         netWorth: netWorth(token.address, type)
       }))
       .sort(by("-netWorth"));
