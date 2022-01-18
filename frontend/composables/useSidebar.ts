@@ -34,6 +34,11 @@ import SidebarLiquityTroveSupply from "~/components/sidebar/context/liquity/Side
 import SidebarLiquityTroveWithdraw from "~/components/sidebar/context/liquity/SidebarLiquityTroveWithdraw.vue";
 import SidebarLiquityTroveBorrow from "~/components/sidebar/context/liquity/SidebarLiquityTroveBorrow.vue";
 import SidebarLiquityTrovePayback from "~/components/sidebar/context/liquity/SidebarLiquityTrovePayback.vue";
+import SidebarLiquityPoolSupply from "~/components/sidebar/context/liquity/SidebarLiquityPoolSupply.vue";
+import SidebarLiquityPoolWithdraw from "~/components/sidebar/context/liquity/SidebarLiquityPoolWithdraw.vue";
+
+import SidebarBprotocolDeposit from "~/components/sidebar/context/bprotocol/SidebarBprotocolDeposit.vue";
+import SidebarBprotocolWithdraw from "~/components/sidebar/context/bprotocol/SidebarBprotocolWithdraw.vue";
 
 import SidebarReflexerCollateral from "~/components/sidebar/context/reflexer/SidebarReflexerCollateral.vue";
 import SidebarReflexerSupply from "~/components/sidebar/context/reflexer/SidebarReflexerSupply.vue";
@@ -41,10 +46,17 @@ import SidebarReflexerWithdraw from "~/components/sidebar/context/reflexer/Sideb
 import SidebarReflexerBorrow from "~/components/sidebar/context/reflexer/SidebarReflexerBorrow.vue";
 import SidebarReflexerPayback from "~/components/sidebar/context/reflexer/SidebarReflexerPayback.vue";
 
-import SidebarStrategySelection from "~/components/sidebar/context/strategy/SidebarStrategySelection.vue";
-import SidebarStrategy from "~/components/sidebar/context/strategy/SidebarStrategy.vue";
+import SidebarYearnV2Supply from "~/components/sidebar/context/yearn-v2/SidebarYearnV2Supply.vue";
+import SidebarYearnV2Withdraw from "~/components/sidebar/context/yearn-v2/SidebarYearnV2Withdraw.vue";
+
+import SidebarUniverseSupply from "~/components/sidebar/context/universe/SidebarUniverseSupply.vue";
+
+import SidebarUniverseWithdraw from "~/components/sidebar/context/universe/SidebarUniverseWithdraw.vue";
 
 import SidebarUbiquitySupply from "~/components/sidebar/context/ubiquity/SidebarUbiquitySupply.vue";
+
+import SidebarStrategySelection from "~/components/sidebar/context/strategy/SidebarStrategySelection.vue";
+import SidebarStrategy from "~/components/sidebar/context/strategy/SidebarStrategy.vue";
 
 const sidebars = {
   "#overview": { component: SidebarOverview, back: false, close: true },
@@ -68,6 +80,10 @@ const sidebars = {
   "/mainnet/compound#borrow": { component: SidebarCompoundBorrow },
   "/mainnet/compound#payback": { component: SidebarCompoundPayback },
 
+  "/mainnet/universe": { component: null },
+  "/mainnet/universe#supply": { component: SidebarUniverseSupply },
+  "/mainnet/universe#withdraw": { component: SidebarUniverseWithdraw },
+
   "/mainnet/maker": { component: null },
   "/mainnet/maker#collateral": { component: SidebarMakerdaoCollateral },
   "/mainnet/maker#supply": { component: SidebarMakerdaoSupply },
@@ -80,6 +96,11 @@ const sidebars = {
   "/mainnet/liquity#trove-withdraw": { component: SidebarLiquityTroveWithdraw },
   "/mainnet/liquity#trove-borrow": { component: SidebarLiquityTroveBorrow },
   "/mainnet/liquity#trove-payback": { component: SidebarLiquityTrovePayback },
+  "/mainnet/liquity#pool-supply": { component: SidebarLiquityPoolSupply },
+  "/mainnet/liquity#pool-withdraw": { component: SidebarLiquityPoolWithdraw },
+
+  "/mainnet/bprotocol#deposit": { component: SidebarBprotocolDeposit },
+  "/mainnet/bprotocol#withdraw": { component: SidebarBprotocolWithdraw },
 
   "/mainnet/reflexer": { component: null },
   "/mainnet/reflexer#collateral": { component: SidebarReflexerCollateral },
@@ -87,6 +108,10 @@ const sidebars = {
   "/mainnet/reflexer#withdraw": { component: SidebarReflexerWithdraw },
   "/mainnet/reflexer#borrow": { component: SidebarReflexerBorrow },
   "/mainnet/reflexer#payback": { component: SidebarReflexerPayback },
+
+  "/mainnet/yearn-v2": { component: null },
+  "/mainnet/yearn-v2#supply": { component: SidebarYearnV2Supply },
+  "/mainnet/yearn-v2#withdraw": { component: SidebarYearnV2Withdraw },
 
   "/mainnet/ubiquity": { component: null },
   "/mainnet/ubiquity#usupply": { component: SidebarUbiquitySupply }

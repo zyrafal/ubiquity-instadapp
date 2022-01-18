@@ -131,7 +131,7 @@
 
                 <div class="ml-2"><Info text="Debt/Collateral ratio" /></div>
               </div>
-              <span>Max - {{ formatPercent(position.maxLiquidation) }}</span>
+              <span>Max - {{ formatPercent(maxLiquidation) }}</span>
             </div>
           </div>
         </div>
@@ -168,8 +168,8 @@
             :type="item.type"
             :supply-reward-rate="item.supplyRewardRate"
             :borrow-reward-rate="item.borrowRewardRate"
-            reward-token-name="MATIC"
-            reward-currency="matic"
+            :reward-token-name="rewardTokenName"
+            :reward-currency="rewardCurrency"
             :cf="item.cf"
             :ll="item.ll"
             :borrow-enabled="item.borrowEnabled"
@@ -192,22 +192,25 @@ import { useBigNumber } from "~/composables/useBigNumber";
 import CardAave from "~/components/protocols/CardAave.vue";
 import AaveIcon from "~/assets/icons/aave.svg?inline";
 import ButtonCTAOutlined from "~/components/common/input/ButtonCTAOutlined.vue";
+import { Network, useNetwork } from "~/composables/useNetwork";
 
 export default defineComponent({
   components: {
     BackIcon,
     CardAave,
     AaveIcon,
-    ButtonCTAOutlined,
+    ButtonCTAOutlined
   },
   setup() {
+    const { activeNetworkId } = useNetwork();
     const {
       position,
       displayPositions,
       totalSupply,
       totalBorrow,
       status,
-      liquidation
+      liquidation,
+      maxLiquidation
     } = useAaveV2Position();
 
     const { div } = useBigNumber();
@@ -226,6 +229,30 @@ export default defineComponent({
       "type"
     );
 
+    const rewardTokenName = computed(() => {
+      if (activeNetworkId.value === Network.Avalanche) {
+        return "AVAX";
+      }
+
+      if (activeNetworkId.value === Network.Mainnet) {
+        return "stkAAVE";
+      }
+
+      return "MATIC";
+    });
+
+    const rewardCurrency = computed(() => {
+      if (activeNetworkId.value === Network.Avalanche) {
+        return "avax";
+      }
+
+      if (activeNetworkId.value === Network.Mainnet) {
+        return "stkaave";
+      }
+
+      return "matic";
+    });
+
     return {
       position,
       filteredPositions,
@@ -236,7 +263,10 @@ export default defineComponent({
       formatUsd,
       formatPercent,
       color,
-      text
+      text,
+      maxLiquidation,
+      rewardTokenName,
+      rewardCurrency
     };
   }
 });

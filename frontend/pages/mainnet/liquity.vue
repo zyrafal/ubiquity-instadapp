@@ -124,46 +124,89 @@
       >
         <h2 class="text-primary-gray text-lg font-semibold">Your Positions</h2>
       </div>
-      <div
-        class="mt-3 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 xxl:gap-6 min-w-max-content px-1"
-      >
-        <CardLiquityTrove
-          v-if="troveOpened"
-          :collateral="collateral"
-          :amount-usd="collateralUsd"
-          :price-in-usd="priceInUsd"
-          position-type="supply"
-          :token="collateralToken"
-        />
 
-        <CardLiquityTrove
-          v-if="troveOpened"
-          :debt="debt"
-          :collateral="collateral"
-          :amount-usd="debt"
-          price-in-usd="1"
-          position-type="borrow"
-          :token="debtToken"
-        />
-
-        <button-dashed
-          v-if="!troveOpened"
-          color="ocean-blue"
-          class="col-span-full"
-          height="80px"
-          full-width
-          @click="openNewTrove"
+      <div class="mt-3">
+        <div class="flex flex-col">
+          <div class="flex mt-3 space-x-4 h-7">
+            <ButtonRadio
+              class="relative overflow-hidden w-24 sm:w-28"
+              :active="isActive(Sections.TROVE)"
+              @click="selectSection(Sections.TROVE)"
+            >
+              Trove
+            </ButtonRadio>
+            <ButtonRadio
+              class="relative overflow-hidden w-24 sm:w-28"
+              :active="isActive(Sections.POOL)"
+              @click="selectSection(Sections.POOL)"
+            >
+              Stability Pool
+            </ButtonRadio>
+          </div>
+        </div>
+        <div
+          v-if="isActive(Sections.TROVE)"
+          :key="Sections.TROVE"
+          class="mt-3 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 xxl:gap-6 min-w-max-content"
         >
-          <SVGAdd class="w-3 mr-2" />
-          Open Trove
-        </button-dashed>
+          <CardLiquityTrove
+            v-if="troveOpened"
+            :collateral="collateral"
+            :amount-usd="collateralUsd"
+            :price-in-usd="priceInUsd"
+            position-type="supply"
+            :token="collateralToken"
+          />
+
+          <CardLiquityTrove
+            v-if="troveOpened"
+            :debt="debt"
+            :collateral="collateral"
+            :amount-usd="debt"
+            price-in-usd="1"
+            position-type="borrow"
+            :token="debtToken"
+          />
+
+          <button-dashed
+            v-if="!troveOpened"
+            color="ocean-blue"
+            class="col-span-full"
+            height="80px"
+            full-width
+            @click="openNewTrove"
+          >
+            <SVGAdd class="w-3 mr-2" />
+            Open Trove
+          </button-dashed>
+        </div>
+
+          <div
+          v-if="isActive(Sections.POOL)"
+          :key="Sections.POOL"
+          class="mt-3 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 xxl:gap-6 min-w-max-content"
+        >
+          <card-liquity-stability-pool
+            :amount="stabilityAmount"
+            :amount-usd="stabilityAmount"
+            :stability-eth-gain="stabilityEthGain"
+            :stability-lqty-gain="stabilityLqtyGain"
+            price-in-usd="1"
+            :token="poolToken"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, useRouter } from "@nuxtjs/composition-api";
+import {
+  defineComponent,
+  computed,
+  useRouter,
+  ref
+} from "@nuxtjs/composition-api";
 import BackIcon from "~/assets/icons/back.svg?inline";
 import SVGBalance from "@/assets/img/icons/balance.svg?inline";
 import SVGPercent from "@/assets/img/icons/percent.svg?inline";
@@ -176,6 +219,14 @@ import { useStatus } from "~/composables/useStatus";
 import { useBigNumber } from "~/composables/useBigNumber";
 import CardLiquityTrove from "~/components/protocols/liquity/CardLiquityTrove.vue";
 import ButtonCTAOutlined from "~/components/common/input/ButtonCTAOutlined.vue";
+import ButtonRadio from "~/components/common/input/ButtonRadio.vue";
+import CardLiquityStabilityPool from "~/components/protocols/liquity/CardLiquityStabilityPool.vue";
+
+const Sections = Object.freeze({
+  TROVE: "trove",
+  POOL: "pool"
+  // STAKING: 'staking',
+});
 
 export default defineComponent({
   components: {
@@ -186,12 +237,14 @@ export default defineComponent({
     SVGBalance,
     SVGPercent,
     CardLiquityTrove,
-    ButtonCTAOutlined
+    ButtonCTAOutlined,
+    ButtonRadio,
+    CardLiquityStabilityPool
   },
   setup() {
     const router = useRouter();
 
-    const { div, isZero, gt, lt } = useBigNumber();
+    const { div } = useBigNumber();
 
     const {
       formatUsd,
@@ -213,8 +266,22 @@ export default defineComponent({
       priceInUsd,
       debt,
       debtToken,
-      collateralToken
+      collateralToken,
+      poolToken,
+      stabilityAmount,
+      stabilityEthGain,
+      stabilityLqtyGain,
     } = useLiquityPosition();
+
+    const currentSection = ref(Sections.TROVE);
+
+    function isActive(section) {
+      return currentSection.value === section;
+    }
+
+    function selectSection(section) {
+      currentSection.value = section;
+    }
 
     const statusLiquidationRatio = computed(() =>
       div(status.value, liquidation.value).toFixed()
@@ -248,8 +315,15 @@ export default defineComponent({
       debt,
       debtToken,
       collateralToken,
+      poolToken,
+      stabilityAmount,
+      stabilityEthGain,
+      stabilityLqtyGain,
 
-      openNewTrove
+      Sections,
+      openNewTrove,
+      isActive,
+      selectSection,
     };
   }
 });

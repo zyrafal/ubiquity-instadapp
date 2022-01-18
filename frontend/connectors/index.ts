@@ -14,15 +14,17 @@ import { SafeAppConnector } from "@gnosis.pm/safe-apps-web3-react/dist/connector
 setWeb3LibraryCallback(provider => new Web3(provider));
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 137]
+  supportedChainIds: [1, 137, 42161, 43114]
 });
 
 export const walletconnect = new WalletConnectConnector({
   rpc: {
-    1: `http://127.0.0.1:8545`,
-    137: "https://rpc-mainnet.maticvigil.com"
+    1: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
+    137: "https://rpc-mainnet.maticvigil.com",
+    42161: "https://arb1.arbitrum.io/rpc",
+    43114: "https://api.avax.network/ext/bc/C/rpc"
   },
-  supportedChainIds: [1, 137]
+  supportedChainIds: [1, 137, 42161, 43114]
 });
 
 // mainnet only
@@ -41,7 +43,7 @@ let gnosisSafe = null;
 
 if (process.client) {
   gnosisSafe = new SafeAppConnector({
-    supportedChainIds: [1, 137]
+    supportedChainIds: [1, 137, 42161, 43114]
   });
 }
 
@@ -51,12 +53,12 @@ const POLLING_INTERVAL = 12000;
 
 export enum LedgerDerivationPath {
   "Legacy" = "44'/60'/0'/x",
-  "LedgerLive" = "44'/60'/x'/0/4"
+  "LedgerLive" = "44'/60'/x'/0/0"
 }
 
 export const ledger = new LedgerConnector({
   chainId: 1,
-  url: `http://127.0.0.1:8545`,
+  url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
   pollingInterval: POLLING_INTERVAL,
   baseDerivationPath: LedgerDerivationPath.LedgerLive,
   accountsOffset: 0,

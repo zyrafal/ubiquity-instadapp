@@ -122,5 +122,21 @@
         "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
         "workspacePath": ".env",
         "id": "iPDl0U93oZd8emEc"
+    },
+    {
+        "type": "Directory",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/backend/deploy",
+        "parent_id": "F8VGoas9DOevrXYf",
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": "backend/deploy",
+        "id": "zp0y1FMXhLeA8c2D"
+    },
+    {
+        "type": "File",
+        "name": "/Users/alain/DEV/ubiquity-instadapp/.favorites.json",
+        "parent_id": null,
+        "workspaceRoot": "/Users/alain/DEV/ubiquity-instadapp",
+        "workspacePath": ".favorites.json",
+        "id": "IvECfYe7i5190Kao"
     }
 ]
