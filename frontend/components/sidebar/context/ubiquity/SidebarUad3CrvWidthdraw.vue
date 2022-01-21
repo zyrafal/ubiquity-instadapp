@@ -170,7 +170,7 @@
       <ValidationErrors :error-messages="errorMessages" class="mb-6" />
       <div class="flex flex-shrink-0 mt-10">
         <!-- :disabled="!isValid || pending" -->
-        <ButtonCTA class="w-full" :loading="pending" @click="cast">
+        <ButtonCTA class="w-full" :loading="pending" @click="withdraw">
           WITHDRAW
         </ButtonCTA>
       </div>
@@ -308,7 +308,7 @@ export default defineComponent({
 
     const pending = ref(false);
 
-    async function cast() {
+    async function withdraw() {
       pending.value = true;
 
       const amount = isMaxAmount.value
@@ -367,7 +367,7 @@ export default defineComponent({
       uadcrv3,
       uadcrv3Add,
       usdcAdd,
-      cast,
+      withdraw,
       pending,
       toggle
     };

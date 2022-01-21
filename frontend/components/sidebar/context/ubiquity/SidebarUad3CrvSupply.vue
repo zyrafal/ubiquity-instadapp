@@ -23,38 +23,68 @@
         TOKEN TO ZAP
       </h3>
 
+      <input-numeric
+        v-model="amount"
+        placeholder="0 DAI"
+        :error="errors.amount.message"
+      >
+        <template v-if="!isMaxAmount" #suffix>
+          <div class="absolute mt-2 top-0 right-0 mr-4">
+            <button
+              type="button"
+              class="text-primary-blue-dark font-semibold text-sm hover:text-primary-blue-hover"
+              @click="toggle"
+            >
+              Max
+            </button>
+          </div>
+        </template>
+      </input-numeric>
+<!-- 
       <input-amount
         :value="amount"
         :token-key="'dai'"
         :token-keys="['dai', 'usdt', 'usdc']"
-        :error="null"
+        :error="errors.amount.message"
         placeholder="0 DAI"
         @input="$event => {}"
         @tokenKeyChanged="
           tokenKey => {
           }
         "
-      />
-
-      <h3 class="text-primary-gray text-xs font-semibold mb-2.5">
-        LOCKUP TIME IN WEEKS
-      </h3>
-      <input-numeric
-        v-model="amount"
-        placeholder="1 - 208 weeks"
-        :error="errors.amount.message"
       >
         <template v-if="!isMaxAmount" #suffix>
           <div class="absolute mt-2 top-0 right-0 mr-4">
-            <!-- <button
+            <button
               type="button"
               class="text-primary-blue-dark font-semibold text-sm hover:text-primary-blue-hover"
               @click="toggle"
             >
               Max
-            </button> -->
+            </button>
           </div>
         </template>
+      </input-amount> -->
+
+      <h3 class="text-primary-gray text-xs font-semibold mb-2.5">
+        LOCKUP TIME IN WEEKS
+      </h3>
+      <input-numeric
+        v-model="weeks"
+        placeholder="1 - 208 weeks"
+        :error="errors.amount.message"
+      >
+        <!-- <template v-if="!isMaxAmount" #suffix>
+          <div class="absolute mt-2 top-0 right-0 mr-4">
+            <button
+              type="button"
+              class="text-primary-blue-dark font-semibold text-sm hover:text-primary-blue-hover"
+              @click="toggle"
+            >
+              Max
+            </button>
+          </div>
+        </template> -->
       </input-numeric>
 
       <h3 class="text-primary-gray text-xs font-semibold mb-2.5 mt-8">
@@ -74,7 +104,7 @@
       <ValidationErrors :error-messages="errorMessages" class="mb-6" />
       <div class="flex flex-shrink-0 mt-10">
         <!-- :disabled="!isValid || pending" -->
-        <ButtonCTA class="w-full" :loading="pending" @click="cast">
+        <ButtonCTA class="w-full" :loading="pending" @click="apeIn">
           APE IN
         </ButtonCTA>
       </div>
@@ -128,9 +158,12 @@ export default defineComponent({
     const amount = ref("");
     const amountParsed = computed(() => parseSafeFloat(amount.value));
 
+    const weeks = ref("");
+
     const { fetchPosition, datas } = useUbiquityPosition();
 
-    const tokenKey = ref("uadcrv3");
+    // const tokenKey = ref("uadcrv3");
+    const tokenKey = ref("dai");
     const balance = computed(() => getBalanceByKey(tokenKey.value));
     const token = computed(() => getTokenByKey(tokenKey.value));
     const symbol = computed(() => token.value?.symbol);
@@ -172,7 +205,7 @@ export default defineComponent({
 
     const pending = ref(false);
 
-    async function cast() {
+    async function apeIn() {
       pending.value = true;
 
       const amount = isMaxAmount.value
@@ -218,6 +251,7 @@ export default defineComponent({
       balance,
       datas,
       amount,
+      weeks,
       uadcrv3,
       formatDecimal,
       formatUsd,
@@ -226,7 +260,7 @@ export default defineComponent({
       errorMessages,
       isMaxAmount,
       isValid,
-      cast,
+      apeIn,
       pending,
       toggle
     };
