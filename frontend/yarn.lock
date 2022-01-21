@@ -6496,9 +6496,10 @@ drbg.js@^1.0.1:
     create-hash "^1.1.2"
     create-hmac "^1.1.4"
 
-"dsa-connect@github:ubiquity/dsa-connect#ubiquity":
-  version "0.5.17"
-  resolved "https://codeload.github.com/ubiquity/dsa-connect/tar.gz/09c852e3f9414b266d06a23e2a14d1783702b75e"
+dsa-connect@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/dsa-connect/-/dsa-connect-0.6.1.tgz#b0f4d345d8667e9bd39bbb0402e8f0035e7c0625"
+  integrity sha512-wClIGH4f/V77UXFIOc3UZtqi8VMUTOUjmLX8wFnBPKHKt/6aQkFXpg+MpSUFwv4oRZE/ovpFwwPUL4bAEElsRA==
 
 duplexer3@^0.1.4:
   version "0.1.4"
