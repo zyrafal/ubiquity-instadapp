@@ -1,0 +1,16 @@
+{
+  "favorites.resources": [
+    {
+      "filePath": "backend/deploy",
+      "group": "Default"
+    },
+    {
+      "filePath": ".env.template",
+      "group": "Default"
+    },
+    {
+      "filePath": "README.md",
+      "group": "Default"
+    }
+  ]
+}
