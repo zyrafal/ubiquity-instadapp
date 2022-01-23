@@ -23,7 +23,9 @@
           "^build"
         ],
         "outputs": [
-          "docs/build/**"
+          "docs/build/**",
+          "artifacts/**",
+          "types/**"
         ]
       },
       "lint": {

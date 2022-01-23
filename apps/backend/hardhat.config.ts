@@ -13,12 +13,12 @@ import "solidity-coverage";
 import "./tasks/index";
 
 import dotenv from "dotenv";
-import { resolve } from "path";
+import findupSync from "findup-sync";
 
 if (!process.env.ALCHEMY_API_KEY) {
-  dotenv.config({ path: resolve(__dirname, "../.env") });
+  dotenv.config({ path: findupSync(".env") || "" });
   if (!process.env.ALCHEMY_API_KEY) {
-    throw new Error("ENV Variable ALCHEMY_API_KEY not set!");
+    throw new Error("HARDHAT : ENV variable ALCHEMY_API_KEY not set!");
   }
 }
 
