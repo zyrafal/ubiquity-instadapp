@@ -40,6 +40,77 @@
           </div>
         </template>
       </input-numeric>
+
+
+      <Dropdown class="mt-4">
+        <template #trigger="{ toggle }">
+          <div class="flex">
+
+          <button
+            class="flex items-center hover:bg-primary-blue-dark/10 p-1.5 rounded"
+            @click="toggle"
+          >
+
+            <icon-currency
+              :currency="token0.symbol.toLowerCase()"
+              class="mr-2.5 w-9 h-9"
+            />
+            <span
+              class="text-primary-blue-dark mr-2.5 text-sm font-semibold"
+            >
+              {{ token0.symbol }}
+            </span>
+            <svg
+              width="9"
+              height="6"
+              viewBox="0 0 9 6"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4.5 4.5L3.89896 5.10104C4.2309 5.43299 4.76909 5.43299 5.10104 5.10104L4.5 4.5ZM8.60104 1.60104C8.93299 1.2691 8.93299 0.730905 8.60104 0.398959C8.2691 0.0670136 7.7309 0.0670135 7.39896 0.398959L8.60104 1.60104ZM1.60104 0.398959C1.26909 0.0670133 0.730905 0.0670132 0.398959 0.398959C0.0670138 0.730905 0.0670137 1.26909 0.398959 1.60104L1.60104 0.398959ZM5.10104 5.10104L8.60104 1.60104L7.39896 0.398959L3.89896 3.89896L5.10104 5.10104ZM5.10104 3.89896L1.60104 0.398959L0.398959 1.60104L3.89896 5.10104L5.10104 3.89896Z"
+                fill="#3F75FF"
+              />
+            </svg>
+          </button>
+          <p class="flex leading-[52px] text-xs ml-2.5">SELECT CURRENCY TO APE IN</p>
+          </div>
+        </template>
+        <template #menu="{ close }">
+          <DropdownMenu
+            class="z-10 bg-white w-32 left-0 rounded border border-[#CFDCFF] drop-shadow-sm pt-0 pb-0"
+            align="right"
+          >
+            <List
+              :items="allTokens"
+              class="p-1.5"
+              items-wrapper-classes="space-y-2 overflow-y-scroll max-h-[200px]"
+            >
+              <template v-slot:default="{ item }">
+                <div
+                  @click="
+                    selectToken0(item);
+                    close();
+                  "
+                  class="cursor-pointer rounded-sm flex items-center p-1.5 bg-[#F6F7F9] border border-transparent hover:border-primary-blue-dark"
+                >
+                  <icon-currency
+                    :currency="item.symbol.toLowerCase()"
+                    class="mr-1.5 w-6 h-6"
+                  />
+
+                  <span
+                    class="text-primary-blue-dark text-sm font-semibold"
+                  >
+                    {{ item.symbol }}
+                  </span>
+                </div>
+              </template>
+            </List>
+          </DropdownMenu>
+        </template>
+      </Dropdown>
+
 <!-- 
       <input-amount
         :value="amount"
@@ -117,7 +188,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref } from "@nuxtjs/composition-api";
+import { computed, defineComponent, ref, reactive } from "@nuxtjs/composition-api";
 import InputNumeric from "~/components/common/input/InputNumeric.vue";
 import InputAmount from "~/components/common/input/InputAmount.vue";
 import { useBalances } from "~/composables/useBalances";
@@ -127,11 +198,13 @@ import { useFormatting } from "~/composables/useFormatting";
 import { useValidators } from "~/composables/useValidators";
 import { useValidation } from "~/composables/useValidation";
 import { useToken } from "~/composables/useToken";
-
+import { useNetwork } from '~/composables/useNetwork';
 import { useParsing } from "~/composables/useParsing";
 import { useMaxAmountActive } from "~/composables/useMaxAmountActive";
 import { useWeb3 } from "@instadapp/vue-web3";
 import ToggleButton from "~/components/common/input/ToggleButton.vue";
+import Dropdown from '~/components/common/input/Dropdown.vue';
+import DropdownMenu from '~/components/protocols/DropdownMenu.vue';
 import { useDSA } from "~/composables/useDSA";
 import ButtonCTA from "~/components/common/input/ButtonCTA.vue";
 import Button from "~/components/Button.vue";
@@ -139,13 +212,13 @@ import { useSidebar } from "~/composables/useSidebar";
 import { useUbiquityPosition } from "~/composables/protocols/useUbiquityPosition";
 
 export default defineComponent({
-  components: { InputNumeric, InputAmount, ToggleButton, ButtonCTA, Button },
+  components: { InputNumeric, InputAmount, ToggleButton, ButtonCTA, Button, Dropdown, DropdownMenu },
   setup() {
     const { close } = useSidebar();
     const { account } = useWeb3();
     const { dsa } = useDSA();
     const { valInt, getTokenByKey } = useToken();
-    const { getBalanceByKey, fetchBalances } = useBalances();
+    const { getBalanceByKey, fetchBalances, prices } = useBalances();
     const { formatDecimal, formatUsd, formatNumber } = useFormatting();
     const { isZero } = useBigNumber();
     const { parseSafeFloat } = useParsing();
@@ -154,6 +227,28 @@ export default defineComponent({
       showConfirmedTransaction,
       showWarning
     } = useNotification();
+
+    const { activeNetworkId } = useNetwork()
+    const allTokens = computed(() => tokens[activeNetworkId.value].allTokens)
+
+    // const token0Input = ref()
+
+    const token0 = reactive({
+      address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      symbol: 'DAI',
+      amount: '0',
+      amountUSD: computed(() => (prices[activeNetworkId.value][token0.address] * token0.amount) || '0'),
+      balance: computed(() => getBalanceByKey(token0.symbol)),
+      decimals: 18,
+
+    })
+
+    const selectToken0 = (token) => {
+      token0.symbol = token.symbol
+      token0.address = token.address
+      token0.decimals = token.decimals
+      token0.amount = "0"
+    }
 
     const amount = ref("");
     const amountParsed = computed(() => parseSafeFloat(amount.value));
@@ -257,6 +352,9 @@ export default defineComponent({
       formatUsd,
       formatNumber18usd,
       errors,
+      token0,
+      allTokens,
+      selectToken0,
       errorMessages,
       isMaxAmount,
       isValid,
