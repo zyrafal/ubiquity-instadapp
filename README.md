@@ -17,8 +17,8 @@ To run the full demo, in one terminal :
 
 ```
 $ cd backend
-$ npm install
-$ npm run dev
+$ yarn
+$ yarn dev
 ```
 
 and in another terminal
@@ -31,4 +31,4 @@ $ yarn dev
 
 Use your browser with metamask, select (or create) localhost network with this rpc `http://localhost:8545` and chainId 1
 
-And connect to url displayed after "yarn dev", should be http://localhost:3000
+And connect to url displayed after frontend / yarn dev, should be http://localhost:3000
