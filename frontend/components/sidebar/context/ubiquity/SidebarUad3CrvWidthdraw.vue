@@ -255,6 +255,9 @@ export default defineComponent({
 
     const tokenKey = ref("uadcrv3");
     const balance = computed(() => getBalanceByKey(tokenKey.value));
+    console.log('=============================')
+    console.log(balance)
+    console.log('=============================')
     const token = computed(() => getTokenByKey(tokenKey.value));
     const symbol = computed(() => token.value?.symbol);
     const decimals = computed(() => token.value?.decimals);
@@ -322,7 +325,7 @@ export default defineComponent({
 
       spells.add({
         connector: ubiquityProd,
-        method: "deposit",
+        method: "withdraw",
         args: [DAI, amount, 4, 0, 0]
       });
 
