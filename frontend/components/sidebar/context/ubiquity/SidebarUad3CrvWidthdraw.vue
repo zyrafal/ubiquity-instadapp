@@ -48,6 +48,13 @@
         </template>
       </input-numeric>
 
+      <input-numeric
+        v-model="bondId"
+        placeholder="Put Your BondId here"
+        class="mt-2"
+      >
+      </input-numeric>
+
       <Dropdown class="mt-4">
         <template #trigger="{ toggle }">
           <div class="flex">
@@ -212,6 +219,7 @@ import {
 } from "@nuxtjs/composition-api";
 import InputNumeric from "~/components/common/input/InputNumeric.vue";
 import InputAmount from "~/components/common/input/InputAmount.vue";
+import Input from "~/components/common/input/Input.vue";
 import tokens from "~/constant/tokens";
 import { useBalances } from "~/composables/useBalances";
 import { useNotification } from "~/composables/useNotification";
@@ -240,6 +248,7 @@ export default defineComponent({
     InputNumeric,
     List,
     InputAmount,
+    Input,
     Dropdown,
     DropdownMenu,
     ToggleButton,
@@ -282,6 +291,8 @@ export default defineComponent({
 
     const amount = ref("");
     const amountParsed = computed(() => parseSafeFloat(amount.value));
+
+    const bondId = ref("");
 
     const { fetchPosition, datas } = useUbiquityPosition();
 
@@ -335,8 +346,11 @@ export default defineComponent({
     });
 
     const pending = ref(false);
-
+    console.log('-----------------------')
+    console.log(process.env)
+    console.log('-----------------------')
     async function withdraw() {
+      console.log(bondId)
       pending.value = true;
 
       const amount = isMaxAmount.value
@@ -344,14 +358,19 @@ export default defineComponent({
         : valInt(amountParsed.value, decimals.value);
 
       console.log(amount);
+      console.log('=============================')
+      console.log(dsa.value.instance.address) // dsa account address
+      console.log('=============================')
       const spells = dsa.value.Spell();
       const DAI = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
       const ubiquityProd = "UBIQUITY-A";
 
+      const bondId = ''
+
       spells.add({
         connector: ubiquityProd,
         method: "withdraw",
-        args: [DAI, amount, 4, 0, 0],
+        args: [bondId, DAI, 0, 0],
       });
 
       try {
@@ -382,6 +401,7 @@ export default defineComponent({
       balance,
       datas,
       amount,
+      bondId,
       formatDecimal,
       formatUsd,
       formatNumber18usd,
