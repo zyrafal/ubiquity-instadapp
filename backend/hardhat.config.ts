@@ -15,6 +15,8 @@ import "./tasks/index";
 import dotenv from "dotenv";
 import { resolve } from "path";
 
+const FAKE_PRIVATE_KEY = "ee239eec0dae38a4b105420e35c1fb695674db0aa316f3ea3fe8e938b651ca0f"; // fake key 32 bytes
+
 if (!process.env.ALCHEMY_API_KEY) {
   dotenv.config({ path: resolve(__dirname, "../.env") });
   if (!process.env.ALCHEMY_API_KEY) {
@@ -22,7 +24,14 @@ if (!process.env.ALCHEMY_API_KEY) {
   }
 }
 
-const accounts = [process.env.UBQ || "", process.env.PRIVATE_KEY || ""];
+let UBQ = process.env.UBQ;
+
+if (!UBQ) {
+  console.error("ENV Variable UBQ not set!");
+  UBQ = FAKE_PRIVATE_KEY;
+}
+
+const accounts = [UBQ as string];
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -46,11 +55,11 @@ const config: HardhatUserConfig = {
       },
       accounts: [
         {
-          privateKey: process.env.UBQ ? process.env.UBQ : "",
+          privateKey: UBQ,
           balance: "1000000000000000000000"
         },
         {
-          privateKey: process.env.PRIVATE_KEY ? process.env.PRIVATE_KEY : "",
+          privateKey: FAKE_PRIVATE_KEY,
           balance: "1000000000000000000000"
         }
       ]

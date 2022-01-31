@@ -11,8 +11,8 @@ let bondingShareV2: IUbiquityBondingShareV2;
 const addr1 = "0xcE156D5d62a8F82326dA8d808D0f3F76360036D0";
 const addr2 = "0x89eae71B865A2A39cBa62060aB1b40bbFFaE5b0D";
 
-// const rpcURL = `http://127.0.0.1:8545`;
-const rpcURL = `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`;
+const rpcURL = `http://127.0.0.1:8545`;
+// const rpcURL = `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`;
 const provider = new ethers.providers.JsonRpcProvider(rpcURL);
 
 const bond = async (bondID: BigNumber): Promise<BondStruct> => {
